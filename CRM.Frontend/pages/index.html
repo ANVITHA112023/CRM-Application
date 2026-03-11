@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CRM Pro – Customer Relationship Management</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0;font-family:'Outfit',sans-serif}
+    html{scroll-behavior:smooth}
+    body{background:#fff}
+    .navbar{background:rgba(255,255,255,0.97)!important;backdrop-filter:blur(10px);border-bottom:1px solid #e2e8f0;padding:16px 32px;position:sticky;top:0;z-index:100}
+    .navbar-brand{font-size:22px;font-weight:900;color:#2563eb!important;letter-spacing:-0.5px}
+    .nav-link{color:#64748b!important;font-weight:500;font-size:15px;padding:8px 16px!important;border-radius:8px;transition:all 0.2s}
+    .nav-link:hover{color:#2563eb!important;background:#eff6ff}
+    .btn-nav-login{background:#2563eb;color:white!important;padding:8px 24px!important;border-radius:10px;font-weight:700}
+    .btn-nav-login:hover{background:#1d4ed8!important}
+    /* HERO */
+    .hero{background:linear-gradient(135deg,#0f172a 0%,#1e3a5f 50%,#2563eb 100%);min-height:92vh;display:flex;align-items:center;position:relative;overflow:hidden}
+    .hero::before{content:'';position:absolute;top:-50%;right:-20%;width:600px;height:600px;background:radial-gradient(circle,rgba(124,58,237,0.3) 0%,transparent 70%);border-radius:50%}
+    .hero::after{content:'';position:absolute;bottom:-30%;left:-10%;width:500px;height:500px;background:radial-gradient(circle,rgba(37,99,235,0.4) 0%,transparent 70%);border-radius:50%}
+    .hero-content{position:relative;z-index:2}
+    .hero-badge{display:inline-block;background:rgba(37,99,235,0.2);border:1px solid rgba(37,99,235,0.4);color:#93c5fd;padding:6px 16px;border-radius:100px;font-size:13px;font-weight:600;letter-spacing:0.5px;margin-bottom:24px}
+    .hero h1{font-size:62px;font-weight:900;color:white;line-height:1.05;letter-spacing:-2px;margin-bottom:24px}
+    .hero h1 span{background:linear-gradient(135deg,#60a5fa,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .hero p{font-size:18px;color:rgba(255,255,255,0.7);max-width:520px;line-height:1.7;margin-bottom:36px}
+    .hero-btns{display:flex;gap:16px;flex-wrap:wrap}
+    .btn-hero-primary{background:#2563eb;color:white;padding:14px 32px;border-radius:12px;font-weight:700;font-size:16px;text-decoration:none;transition:all 0.2s;border:none;display:inline-block;cursor:pointer;font-family:'Outfit',sans-serif}
+    .btn-hero-primary:hover{background:#1d4ed8;color:white;transform:translateY(-2px);box-shadow:0 8px 25px rgba(37,99,235,0.4)}
+    .btn-hero-secondary{background:rgba(255,255,255,0.1);color:white;padding:14px 32px;border-radius:12px;font-weight:600;font-size:16px;text-decoration:none;border:1px solid rgba(255,255,255,0.2);transition:all 0.2s;display:inline-block}
+    .btn-hero-secondary:hover{background:rgba(255,255,255,0.2);color:white}
+    .hero-stats{display:flex;gap:40px;margin-top:56px;padding-top:40px;border-top:1px solid rgba(255,255,255,0.1);flex-wrap:wrap}
+    .hero-stat-num{font-size:32px;font-weight:900;color:white}
+    .hero-stat-label{font-size:13px;color:rgba(255,255,255,0.5);margin-top:2px}
+    .floating-card{background:rgba(255,255,255,0.08);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.12);border-radius:16px;padding:20px 24px;color:white;margin-bottom:16px;position:relative;z-index:2}
+    .fc-label{font-size:11px;color:rgba(255,255,255,0.5);font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:10px}
+    /* ABOUT */
+    .about-section{padding:100px 0;background:#fff}
+    .section-label{font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#2563eb;margin-bottom:12px}
+    .section-title{font-size:40px;font-weight:900;color:#0f172a;letter-spacing:-1px;margin-bottom:20px;line-height:1.15}
+    .section-text{font-size:16px;color:#64748b;line-height:1.8}
+    .about-feature{display:flex;gap:16px;margin-bottom:28px;align-items:flex-start}
+    .af-icon{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+    .af-title{font-weight:700;color:#0f172a;margin-bottom:4px;font-size:15px}
+    .af-text{font-size:14px;color:#64748b;line-height:1.6}
+    /* SERVICES */
+    .services-section{padding:100px 0;background:#f8fafc}
+    .service-card{background:#fff;border:1px solid #e2e8f0;border-radius:20px;padding:36px 32px;height:100%;transition:all 0.3s;cursor:default}
+    .service-card:hover{transform:translateY(-8px);box-shadow:0 20px 40px rgba(0,0,0,0.08);border-color:#2563eb}
+    .service-icon{width:64px;height:64px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:28px;margin-bottom:24px}
+    .service-title{font-size:20px;font-weight:700;color:#0f172a;margin-bottom:12px}
+    .service-text{color:#64748b;font-size:14px;line-height:1.7}
+    /* CONTACT */
+    .contact-section{padding:100px 0;background:#fff}
+    .contact-card{background:#f8fafc;border:1px solid #e2e8f0;border-radius:24px;padding:48px}
+    .form-label{font-weight:600;font-size:14px;color:#374151;margin-bottom:6px;display:block}
+    .form-control{width:100%;padding:13px 16px;border:2px solid #e2e8f0;border-radius:12px;font-size:14px;transition:all 0.2s;font-family:'Outfit',sans-serif;outline:none;background:#fff}
+    .form-control:focus{border-color:#2563eb;box-shadow:0 0 0 3px rgba(37,99,235,0.1)}
+    .form-control::placeholder{color:#94a3b8}
+    .btn-submit{background:linear-gradient(135deg,#2563eb,#7c3aed);color:white;border:none;padding:14px 32px;border-radius:12px;font-weight:700;font-size:16px;width:100%;cursor:pointer;transition:all 0.2s;font-family:'Outfit',sans-serif}
+    .btn-submit:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(37,99,235,0.35)}
+    .btn-submit:disabled{opacity:0.7;cursor:not-allowed;transform:none}
+    .alert-success-custom{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:12px;padding:14px 18px;color:#166534;font-weight:600;font-size:14px;margin-bottom:24px;display:none}
+    .alert-danger-custom{background:#fef2f2;border:1px solid #fecaca;border-radius:12px;padding:14px 18px;color:#dc2626;font-weight:600;font-size:14px;margin-bottom:24px;display:none}
+    /* FOOTER */
+    footer{background:#0f172a;color:rgba(255,255,255,0.5);text-align:center;padding:36px;font-size:14px}
+    footer span{color:white;font-weight:700}
+    .mb-4-custom{margin-bottom:20px}
+  </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar navbar-expand-lg">
+  <div class="container">
+    <a class="navbar-brand" href="#">⚡ CRM Pro</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navMenu">
+      <ul class="navbar-nav mx-auto">
+        <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
+        <li class="nav-item"><a class="nav-link" href="#services">Services</a></li>
+        <li class="nav-item"><a class="nav-link" href="#contact">Contact Us</a></li>
+      </ul>
+      <div class="d-flex gap-2 align-items-center">
+        <a href="register.html" class="nav-link" style="font-weight:600">Register</a>
+        <a href="login.html" class="nav-link btn-nav-login">Login →</a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-lg-6 hero-content">
+        <div class="hero-badge">✨ The Modern CRM Solution</div>
+        <h1>Manage Your <span>Sales Team</span> Smarter</h1>
+        <p>Track customers, assign tasks, monitor performance — all in one powerful platform built for modern sales teams.</p>
+        <div class="hero-btns">
+          <a href="register.html" class="btn-hero-primary">Get Started Free →</a>
+          <a href="#services" class="btn-hero-secondary">See Features</a>
+        </div>
+        <div class="hero-stats">
+          <div><div class="hero-stat-num">100%</div><div class="hero-stat-label">Secure JWT Auth</div></div>
+          <div><div class="hero-stat-num">∞</div><div class="hero-stat-label">Sales Reps</div></div>
+          <div><div class="hero-stat-num">24/7</div><div class="hero-stat-label">Availability</div></div>
+        </div>
+      </div>
+      <div class="col-lg-5 offset-lg-1 d-none d-lg-block">
+        <div class="floating-card">
+          <div class="fc-label">📊 Real-Time Dashboard</div>
+          <div style="margin-top:10px;display:flex;flex-direction:column;gap:10px">
+            <div style="display:flex;align-items:center;justify-content:space-between">
+              <span style="font-size:13px;color:rgba(255,255,255,0.6)">Tasks Completed</span>
+              <span style="font-size:13px;font-weight:700;color:#34d399">↑ 24% this week</span>
+            </div>
+            <div style="height:7px;background:rgba(255,255,255,0.1);border-radius:100px;overflow:hidden">
+              <div style="width:72%;height:100%;background:linear-gradient(90deg,#34d399,#059669);border-radius:100px"></div>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between">
+              <span style="font-size:13px;color:rgba(255,255,255,0.6)">Customer Assignments</span>
+              <span style="font-size:13px;font-weight:700;color:#60a5fa">↑ 18% this week</span>
+            </div>
+            <div style="height:7px;background:rgba(255,255,255,0.1);border-radius:100px;overflow:hidden">
+              <div style="width:55%;height:100%;background:linear-gradient(90deg,#60a5fa,#2563eb);border-radius:100px"></div>
+            </div>
+          </div>
+        </div>
+        <div class="floating-card">
+          <div class="fc-label">🏆 Leaderboard Preview</div>
+          <div style="display:flex;flex-direction:column;gap:10px;margin-top:10px">
+            <div style="display:flex;align-items:center;gap:10px">
+              <span style="font-size:18px">🥇</span>
+              <div style="flex:1;height:7px;background:rgba(255,255,255,0.1);border-radius:100px;overflow:hidden">
+                <div style="width:90%;height:100%;background:linear-gradient(90deg,#fbbf24,#f59e0b);border-radius:100px"></div>
+              </div>
+              <span style="font-size:12px;font-weight:700;color:#fbbf24">90%</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px">
+              <span style="font-size:18px">🥈</span>
+              <div style="flex:1;height:7px;background:rgba(255,255,255,0.1);border-radius:100px;overflow:hidden">
+                <div style="width:74%;height:100%;background:linear-gradient(90deg,#94a3b8,#64748b);border-radius:100px"></div>
+              </div>
+              <span style="font-size:12px;font-weight:700;color:#94a3b8">74%</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px">
+              <span style="font-size:18px">🥉</span>
+              <div style="flex:1;height:7px;background:rgba(255,255,255,0.1);border-radius:100px;overflow:hidden">
+                <div style="width:61%;height:100%;background:linear-gradient(90deg,#fb923c,#ea580c);border-radius:100px"></div>
+              </div>
+              <span style="font-size:12px;font-weight:700;color:#fb923c">61%</span>
+            </div>
+          </div>
+          <div style="font-size:12px;color:rgba(255,255,255,0.35);margin-top:10px">Track your team's performance in real time</div>
+        </div>
+        <div class="floating-card">
+          <div class="fc-label">✅ Task Management</div>
+          <div style="display:flex;flex-direction:column;gap:8px;margin-top:10px">
+            <div style="display:flex;align-items:center;gap:10px">
+              <div style="width:8px;height:8px;background:#34d399;border-radius:50%;flex-shrink:0"></div>
+              <span style="font-size:13px;color:rgba(255,255,255,0.8)">Assign tasks to sales reps instantly</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px">
+              <div style="width:8px;height:8px;background:#60a5fa;border-radius:50%;flex-shrink:0"></div>
+              <span style="font-size:13px;color:rgba(255,255,255,0.8)">Track status with drag & drop Kanban</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px">
+              <div style="width:8px;height:8px;background:#a78bfa;border-radius:50%;flex-shrink:0"></div>
+              <span style="font-size:13px;color:rgba(255,255,255,0.8)">Get notified on due dates & updates</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section class="about-section" id="about">
+  <div class="container">
+    <div class="row align-items-center g-5">
+      <div class="col-lg-5">
+        <div class="section-label">About CRM Pro</div>
+        <div class="section-title">Built for High-Performance Sales Teams</div>
+        <p class="section-text">CRM Pro gives your team everything they need to manage customers, track tasks, and stay on top of their performance — in one beautifully simple interface.</p>
+        <a href="register.html" style="display:inline-block;margin-top:28px;background:linear-gradient(135deg,#2563eb,#7c3aed);color:white;padding:13px 28px;border-radius:12px;font-weight:700;text-decoration:none;font-size:15px">Join Now →</a>
+      </div>
+      <div class="col-lg-6 offset-lg-1">
+        <div class="about-feature">
+          <div class="af-icon" style="background:#eff6ff">🔐</div>
+          <div>
+            <div class="af-title">Secure Authentication</div>
+            <div class="af-text">JWT-based login with role-based access control. Admins and Sales Reps each have their own tailored view.</div>
+          </div>
+        </div>
+        <div class="about-feature">
+          <div class="af-icon" style="background:#f0fdf4">📊</div>
+          <div>
+            <div class="af-title">Real-time Dashboard</div>
+            <div class="af-text">Live stats, leaderboards, and performance metrics help admins make smarter, data-driven decisions.</div>
+          </div>
+        </div>
+        <div class="about-feature">
+          <div class="af-icon" style="background:#fdf4ff">📋</div>
+          <div>
+            <div class="af-title">Task Management</div>
+            <div class="af-text">Assign tasks to sales reps, track progress, and celebrate completions with a live leaderboard.</div>
+          </div>
+        </div>
+        <div class="about-feature">
+          <div class="af-icon" style="background:#fefce8">📥</div>
+          <div>
+            <div class="af-title">Excel Export</div>
+            <div class="af-text">Download service request data as Excel files for offline analysis and reporting with one click.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section class="services-section" id="services">
+  <div class="container">
+    <div class="text-center mb-5">
+      <div class="section-label">Our Services</div>
+      <div class="section-title">Everything You Need to Succeed</div>
+      <p class="section-text" style="max-width:500px;margin:0 auto">From customer tracking to task management — CRM Pro has all the tools your sales team needs.</p>
+    </div>
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="service-card">
+          <div class="service-icon" style="background:#eff6ff">👥</div>
+          <div class="service-title">Customer Management</div>
+          <div class="service-text">Store and manage all customer information in one place. Search, filter, and update customer records instantly.</div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="service-card">
+          <div class="service-icon" style="background:#f0fdf4">📋</div>
+          <div class="service-title">Task Assignment</div>
+          <div class="service-text">Assign tasks to your sales representatives, set deadlines, and track completion status in real time.</div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="service-card">
+          <div class="service-icon" style="background:#fdf4ff">📊</div>
+          <div class="service-title">Performance Analytics</div>
+          <div class="service-text">View leaderboards, track completed tasks, and identify your top performers with the admin dashboard.</div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="service-card">
+          <div class="service-icon" style="background:#fefce8">🔐</div>
+          <div class="service-title">Secure Access Control</div>
+          <div class="service-text">Role-based access ensures admins and sales reps only see what they need. JWT tokens keep everything secure.</div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="service-card">
+          <div class="service-icon" style="background:#fef2f2">📬</div>
+          <div class="service-title">Service Requests</div>
+          <div class="service-text">Clients submit requests directly from this page. Admins review, update status and manage them all in one place.</div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="service-card">
+          <div class="service-icon" style="background:#f0fdf4">📥</div>
+          <div class="service-title">Excel Reports</div>
+          <div class="service-text">Export service request data to Excel with one click. Perfect for offline reporting and stakeholder presentations.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT FORM -->
+<section class="contact-section" id="contact">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-7">
+        <div class="text-center mb-5">
+          <div class="section-label">Get In Touch</div>
+          <div class="section-title">Request a Service</div>
+          <p class="section-text">Fill out the form and our team will get back to you as soon as possible.</p>
+        </div>
+        <div class="contact-card">
+          <div id="successAlert" class="alert-success-custom">✅ Request submitted! We'll be in touch soon.</div>
+          <div id="errorAlert" class="alert-danger-custom">❌ Failed to submit. Please make sure the server is running.</div>
+          <div class="mb-4-custom" style="margin-bottom:20px">
+            <label class="form-label">Your Full Name *</label>
+            <input id="cName" class="form-control" placeholder="John Doe">
+          </div>
+          <div class="mb-4-custom" style="margin-bottom:20px">
+            <label class="form-label">Email Address *</label>
+            <input id="cEmail" type="email" class="form-control" placeholder="john@example.com">
+          </div>
+          <div style="margin-bottom:24px">
+            <label class="form-label">Message / Service Required</label>
+            <textarea id="cMessage" class="form-control" rows="4" placeholder="Tell us what you need..."></textarea>
+          </div>
+          <button class="btn-submit" id="submitBtn" onclick="submitRequest()">Send Request →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p style="margin-bottom:8px">© 2026 <span>⚡ CRM Pro</span> — Built with .NET Core 10 & PostgreSQL</p>
+  <p style="font-size:13px">
+    <a href="login.html" style="color:#60a5fa;text-decoration:none;font-weight:600">Login</a> ·
+    <a href="register.html" style="color:#60a5fa;text-decoration:none;font-weight:600">Register</a>
+  </p>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  const API_BASE = 'http://localhost:5271/api';
+
+  async function submitRequest() {
+    const name = document.getElementById('cName').value.trim();
+    const email = document.getElementById('cEmail').value.trim();
+    const message = document.getElementById('cMessage').value.trim();
+    const btn = document.getElementById('submitBtn');
+    const successEl = document.getElementById('successAlert');
+    const errorEl = document.getElementById('errorAlert');
+
+    successEl.style.display = 'none';
+    errorEl.style.display = 'none';
+
+    if (!name || !email) {
+      errorEl.textContent = '⚠️ Name and email are required!';
+      errorEl.style.display = 'block';
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'Sending...';
+
+    try {
+      const res = await fetch(API_BASE + '/servicerequest', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, message, status: 'Ongoing' })
+      });
+
+      if (res.ok) {
+        successEl.style.display = 'block';
+        document.getElementById('cName').value = '';
+        document.getElementById('cEmail').value = '';
+        document.getElementById('cMessage').value = '';
+      } else {
+        throw new Error('Failed');
+      }
+    } catch (err) {
+      errorEl.textContent = '❌ Failed to submit. Please make sure the server is running on port 5271.';
+      errorEl.style.display = 'block';
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Send Request →';
+    }
+  }
+</script>
+</body>
+</html>

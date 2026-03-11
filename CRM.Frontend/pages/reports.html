@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Reports – CRM Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+:root{--bg:#f0f2f5;--surface:#fff;--surface2:#f8fafc;--border:#e2e8f0;--border2:#f1f5f9;--text:#0f172a;--text2:#475569;--text3:#94a3b8;--accent:#6366f1;--success:#10b981;--warning:#f59e0b;--danger:#ef4444;--sidebar-w:240px;--nav-h:64px;--radius:14px;--font:'Plus Jakarta Sans',sans-serif}
+*{box-sizing:border-box;margin:0;padding:0;font-family:var(--font)}
+body{background:var(--bg);color:var(--text)}
+.topbar{position:fixed;top:0;left:0;right:0;height:var(--nav-h);background:#0f172a;border-bottom:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;padding:0 24px 0 0;z-index:200}
+.topbar-brand{width:var(--sidebar-w);display:flex;align-items:center;gap:10px;padding:0 24px;flex-shrink:0;font-size:18px;font-weight:800;color:white}
+.logo-icon{width:34px;height:34px;background:linear-gradient(135deg,#6366f1,#8b5cf6);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:12px}
+.topbar-user{color:rgba(255,255,255,0.6);font-size:13px;font-weight:500}
+.topbar-user strong{color:white;font-weight:700}
+.topbar-btn{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);color:rgba(255,255,255,0.8);padding:7px 16px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font)}
+.sidebar{position:fixed;top:var(--nav-h);left:0;bottom:0;width:var(--sidebar-w);background:#0f172a;border-right:1px solid rgba(255,255,255,0.05);padding:20px 12px;overflow-y:auto;z-index:100;display:flex;flex-direction:column;gap:2px}
+.sidebar-section{font-size:10px;font-weight:700;letter-spacing:1.5px;color:rgba(255,255,255,0.25);text-transform:uppercase;padding:12px 12px 6px;margin-top:8px}
+.sidebar a{display:flex;align-items:center;gap:10px;padding:10px 12px;color:rgba(255,255,255,0.5);text-decoration:none;font-weight:500;font-size:13.5px;border-radius:9px;transition:all 0.15s}
+.sidebar a:hover{background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.85)}
+.sidebar a.active{background:linear-gradient(135deg,rgba(99,102,241,0.25),rgba(139,92,246,0.15));color:#a5b4fc;border:1px solid rgba(99,102,241,0.25)}
+.s-icon{font-size:16px;flex-shrink:0}
+.main{margin-left:var(--sidebar-w);padding-top:var(--nav-h);min-height:100vh}
+.page{padding:28px 32px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:0 1px 3px rgba(0,0,0,0.06);overflow:hidden;margin-bottom:20px}
+.card-hdr{padding:16px 22px;border-bottom:1px solid var(--border2);display:flex;align-items:center;justify-content:space-between}
+.card-hdr h3{font-size:15px;font-weight:800}
+.card-body{padding:20px}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:20px}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;text-align:center;position:relative;overflow:hidden}
+.stat-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px}
+.sc1::after{background:linear-gradient(90deg,#6366f1,#8b5cf6)}
+.sc2::after{background:linear-gradient(90deg,#10b981,#34d399)}
+.sc3::after{background:linear-gradient(90deg,#f59e0b,#fbbf24)}
+.sc4::after{background:linear-gradient(90deg,#f43f5e,#fb7185)}
+.sm-val{font-size:34px;font-weight:900;letter-spacing:-1px;margin-bottom:4px}
+.sm-lbl{font-size:12px;color:var(--text3);font-weight:600}
+.sm-sub{font-size:11px;color:var(--text3);margin-top:2px}
+.chart-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:48px;color:var(--text3);font-size:13px;font-weight:600;gap:8px}
+.sr-table{width:100%;border-collapse:collapse}
+.sr-table th{font-size:11px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:var(--text3);padding:11px 16px;border-bottom:1px solid var(--border);text-align:left;background:var(--surface2)}
+.sr-table td{padding:13px 16px;border-bottom:1px solid var(--border2);font-size:13.5px;vertical-align:middle}
+.sr-table tr:last-child td{border-bottom:none}
+.sr-table tr:hover td{background:#f8f9ff}
+.progress-bar{height:7px;background:var(--border);border-radius:100px;overflow:hidden;flex:1;min-width:80px}
+.progress-fill{height:100%;border-radius:100px;background:linear-gradient(90deg,#6366f1,#8b5cf6);transition:width 0.8s ease}
+.badge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:6px;font-size:11px;font-weight:700}
+.badge-green{background:#dcfce7;color:#15803d}
+.badge-amber{background:#fef9c3;color:#a16207}
+.badge-red{background:#fee2e2;color:#b91c1c}
+.badge-indigo{background:#e0e7ff;color:#4338ca}
+.btn{display:inline-flex;align-items:center;gap:7px;padding:9px 18px;border-radius:9px;font-size:13.5px;font-weight:600;cursor:pointer;border:none;font-family:var(--font);transition:all 0.18s}
+.btn-sm{padding:6px 13px;font-size:12px;border-radius:7px}
+.btn-success{background:linear-gradient(135deg,#10b981,#059669);color:white}
+.btn-success:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(16,185,129,0.35);color:white}
+.btn-ghost{background:var(--surface2);color:var(--text2);border:1.5px solid var(--border)}
+.btn-ghost:hover{background:var(--border);color:var(--text)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.fade{animation:fadeUp 0.35s ease both}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-brand"><div class="logo-icon">⚡</div>CRM Pro</div>
+  <div class="topbar-right">
+    <span class="topbar-user">Hello, <strong id="userName">Admin</strong></span>
+    <button class="topbar-btn" onclick="logout()">Sign Out</button>
+  </div>
+</div>
+
+<div class="sidebar">
+  <div class="sidebar-section">Main</div>
+  <a href="admin-dashboard.html"><span class="s-icon">📊</span>Dashboard</a>
+  <a href="kanban.html"><span class="s-icon">📋</span>Kanban Board</a>
+  <div class="sidebar-section">Management</div>
+  <a href="sales-reps.html"><span class="s-icon">👥</span>Sales Reps</a>
+  <a href="customers.html"><span class="s-icon">🧑</span>Customers</a>
+  <a href="tasks.html"><span class="s-icon">✅</span>All Tasks</a>
+  <div class="sidebar-section">Admin</div>
+  <a href="service-requests.html"><span class="s-icon">📬</span>Service Requests</a>
+  <a href="reports.html" class="active"><span class="s-icon">📈</span>Reports</a>
+  <div class="sidebar-section">Site</div>
+  <a href="index.html" target="_blank"><span class="s-icon">🌐</span>Landing Page</a>
+</div>
+
+<div class="main"><div class="page">
+
+  <!-- Header -->
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px;flex-wrap:wrap;gap:12px">
+    <div>
+      <h1 style="font-size:26px;font-weight:800;letter-spacing:-0.5px">📈 Reports & Analytics</h1>
+      <div style="font-size:13.5px;color:var(--text3);margin-top:3px">Performance overview across your CRM</div>
+    </div>
+    <div style="display:flex;gap:10px">
+      <button class="btn btn-ghost btn-sm" onclick="loadReports()">↻ Refresh</button>
+      <button class="btn btn-success btn-sm" onclick="downloadExcel()">📥 Export Excel</button>
+    </div>
+  </div>
+
+  <!-- STAT CARDS -->
+  <div class="grid-4 fade">
+    <div class="stat-card sc1"><div class="sm-val" id="statSRs" style="color:#6366f1">–</div><div class="sm-lbl">Sales Reps</div></div>
+    <div class="stat-card sc2"><div class="sm-val" id="statCustomers" style="color:#10b981">–</div><div class="sm-lbl">Customers</div><div class="sm-sub" id="statAssigned"></div></div>
+    <div class="stat-card sc3"><div class="sm-val" id="statTasks" style="color:#f59e0b">–</div><div class="sm-lbl">Total Tasks</div><div class="sm-sub" id="statTaskRate"></div></div>
+    <div class="stat-card sc4"><div class="sm-val" id="statRequests" style="color:#f43f5e">–</div><div class="sm-lbl">Service Requests</div></div>
+  </div>
+
+  <!-- CHART 1: Tasks per SR — Vertical Bar -->
+  <div class="card">
+    <div class="card-hdr">
+      <h3>📊 Tasks per Sales Rep</h3>
+      <span style="font-size:12px;color:var(--text3)">Vertical bar — Completed vs Pending</span>
+    </div>
+    <div class="card-body">
+      <canvas id="barChart" height="110"></canvas>
+      <div class="chart-empty" id="barEmpty" style="display:none">
+        <div style="font-size:32px">📋</div>No task data yet
+      </div>
+    </div>
+  </div>
+
+  <!-- CHART 2: Customers by SR — Horizontal Bar -->
+  <div class="card">
+    <div class="card-hdr">
+      <h3>👥 Customers by Sales Rep</h3>
+      <span style="font-size:12px;color:var(--text3)">Horizontal bar — customers assigned per SR</span>
+    </div>
+    <div class="card-body">
+      <canvas id="custBySRChart" id="custBySRChart"></canvas>
+      <div class="chart-empty" id="custBySREmpty" style="display:none">
+        <div style="font-size:32px">👥</div>No customers assigned yet
+      </div>
+    </div>
+  </div>
+
+  <!-- LEADERBOARD TABLE -->
+  <div class="card">
+    <div class="card-hdr">
+      <h3>🏆 Sales Rep Leaderboard</h3>
+      <span style="font-size:12px;color:var(--text3)">Sorted by tasks completed</span>
+    </div>
+    <div class="card-body" style="padding:0">
+      <table class="sr-table">
+        <thead>
+          <tr>
+            <th style="text-align:center;width:60px">Rank</th>
+            <th>Sales Rep</th>
+            <th>Customers</th>
+            <th>Completed</th>
+            <th>Pending</th>
+            <th>Completion Rate</th>
+            <th>Performance</th>
+          </tr>
+        </thead>
+        <tbody id="srTable">
+          <tr><td colspan="7" style="text-align:center;padding:40px;color:var(--text3)">
+            <div style="font-size:28px;margin-bottom:8px">⏳</div>Loading...
+          </td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div></div>
+
+<script>
+const API_BASE = 'http://localhost:5271/api';
+function getToken(){ return localStorage.getItem('token'); }
+function logout(){ localStorage.clear(); window.location.href = 'login.html'; }
+if (!getToken()) window.location.href = 'login.html';
+if (localStorage.getItem('role') !== 'Admin') window.location.href = 'sr-dashboard.html?id=' + localStorage.getItem('userId');
+document.getElementById('userName').textContent = localStorage.getItem('userName') || 'Admin';
+
+const Api = {
+  get: async (url) => {
+    try {
+      const r = await fetch(API_BASE + url, { headers: { 'Authorization': 'Bearer ' + getToken() } });
+      if (r.status === 401) { logout(); return null; }
+      if (!r.ok) return null;
+      return await r.json();
+    } catch(e) { console.warn('API error:', url, e); return null; }
+  }
+};
+
+const charts = {};
+function makeChart(id, config) {
+  if (charts[id]) { charts[id].destroy(); delete charts[id]; }
+  const canvas = document.getElementById(id);
+  if (!canvas) return;
+  charts[id] = new Chart(canvas, config);
+}
+
+async function downloadExcel() {
+  try {
+    const r = await fetch(API_BASE + '/servicerequest/export', { headers: { 'Authorization': 'Bearer ' + getToken() } });
+    if (!r.ok) { alert('Export failed'); return; }
+    const blob = await r.blob();
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'crm-service-requests.xlsx';
+    a.click();
+  } catch(e) { alert('Export failed: ' + e.message); }
+}
+
+async function loadReports() {
+  try {
+    const [dash, customers, requests, allSRs] = await Promise.all([
+      Api.get('/dashboard'),
+      Api.get('/customer'),
+      Api.get('/servicerequest'),
+      Api.get('/salesrep')
+    ]);
+
+    const srList      = allSRs    || [];
+    const custList    = customers || [];
+    const reqList     = requests  || [];
+    const leaderboard = dash?.leaderboard || [];
+
+    // Load tasks for stat card totals
+    let allTasks = [];
+    for (const sr of srList) {
+      const tasks = await Api.get('/task/salesrep/' + sr.id) || [];
+      tasks.forEach(t => allTasks.push(t));
+    }
+
+    // ── STAT CARDS ────────────────────────────────────────
+    const totalTasks     = allTasks.length;
+    const completedTasks = allTasks.filter(t => t.status === 'Completed').length;
+    const taskRate       = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+    const assignedCusts  = custList.filter(c => c.salesRepId).length;
+
+    document.getElementById('statSRs').textContent       = srList.length;
+    document.getElementById('statCustomers').textContent = custList.length;
+    document.getElementById('statAssigned').textContent  = assignedCusts + ' assigned';
+    document.getElementById('statTasks').textContent     = totalTasks;
+    document.getElementById('statTaskRate').textContent  = taskRate + '% completed';
+    document.getElementById('statRequests').textContent  = reqList.length;
+
+    // ── CHART 1: Tasks per SR — Vertical Bar ─────────────
+    if (!leaderboard.length) {
+      document.getElementById('barChart').style.display = 'none';
+      document.getElementById('barEmpty').style.display = 'flex';
+    } else {
+      document.getElementById('barChart').style.display = '';
+      document.getElementById('barEmpty').style.display = 'none';
+      const lbData = leaderboard.slice(0, 10);
+      makeChart('barChart', {
+        type: 'bar',
+        data: {
+          labels: lbData.map(sr => sr.name),
+          datasets: [
+            {
+              label: '✅ Completed',
+              data: lbData.map(sr => sr.tasksCompleted || 0),
+              backgroundColor: 'rgba(99,102,241,0.85)',
+              borderRadius: 6
+            },
+            {
+              label: '⏳ Pending',
+              data: lbData.map(sr => sr.tasksPending || 0),
+              backgroundColor: 'rgba(245,158,11,0.75)',
+              borderRadius: 6
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          plugins: { legend: { position: 'top' } },
+          scales: {
+            x: { grid: { display: false } },
+            y: { grid: { color: '#f1f5f9' }, beginAtZero: true, ticks: { stepSize: 1 } }
+          }
+        }
+      });
+    }
+
+    // ── CHART 2: Customers by SR — Horizontal Bar ────────
+    const srCustCounts = srList
+      .map(sr => ({ name: sr.name, count: custList.filter(c => c.salesRepId === sr.id).length }))
+      .filter(x => x.count > 0);
+
+    if (!srCustCounts.length) {
+      document.getElementById('custBySRChart').style.display = 'none';
+      document.getElementById('custBySREmpty').style.display = 'flex';
+    } else {
+      document.getElementById('custBySRChart').style.display = '';
+      document.getElementById('custBySREmpty').style.display = 'none';
+
+      // Dynamic height: 52px per SR row, minimum 160px
+      const hBarHeight = Math.max(160, srCustCounts.length * 52);
+      document.getElementById('custBySRChart').style.height = hBarHeight + 'px';
+
+      makeChart('custBySRChart', {
+        type: 'bar',
+        data: {
+          labels: srCustCounts.map(x => x.name),
+          datasets: [{
+            label: 'Customers',
+            data: srCustCounts.map(x => x.count),
+            backgroundColor: srCustCounts.map((_, i) => `hsla(${160 + i * 22}, 70%, 45%, 0.85)`),
+            borderRadius: 6
+          }]
+        },
+        options: {
+          indexAxis: 'y',  // <-- this makes it horizontal
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { grid: { color: '#f1f5f9' }, beginAtZero: true, ticks: { stepSize: 1 } },
+            y: { grid: { display: false } }
+          }
+        }
+      });
+    }
+
+    // ── LEADERBOARD TABLE ─────────────────────────────────
+    const tbody = document.getElementById('srTable');
+    if (!leaderboard.length) {
+      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--text3)">No sales reps yet</td></tr>';
+    } else {
+      tbody.innerHTML = leaderboard.map((sr, i) => {
+        const total     = (sr.tasksCompleted || 0) + (sr.tasksPending || 0);
+        const rate      = total > 0 ? Math.round((sr.tasksCompleted / total) * 100) : 0;
+        const medal     = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : '#' + (i + 1);
+        const custCount = custList.filter(c => c.salesRepId === sr.id).length;
+        const perfBadge = rate >= 70
+          ? '<span class="badge badge-green">🌟 Top Performer</span>'
+          : rate >= 40
+          ? '<span class="badge badge-amber">📈 Growing</span>'
+          : '<span class="badge badge-red">🚀 Starting</span>';
+        return `<tr>
+          <td style="font-weight:800;font-size:18px;text-align:center">${medal}</td>
+          <td><a href="sr-profile.html?id=${sr.id}" style="font-weight:700;color:var(--accent);text-decoration:none">${sr.name}</a></td>
+          <td><span class="badge badge-indigo">🧑 ${custCount}</span></td>
+          <td><strong style="color:#6366f1;font-size:15px">${sr.tasksCompleted || 0}</strong></td>
+          <td><strong style="color:#f59e0b;font-size:15px">${sr.tasksPending || 0}</strong></td>
+          <td>
+            <div style="display:flex;align-items:center;gap:10px">
+              <div class="progress-bar"><div class="progress-fill" style="width:${rate}%"></div></div>
+              <span style="font-size:12px;font-weight:700;color:var(--text2);min-width:38px">${rate}%</span>
+            </div>
+          </td>
+          <td>${perfBadge}</td>
+        </tr>`;
+      }).join('');
+    }
+
+  } catch(e) {
+    console.error('loadReports error:', e);
+  }
+}
+
+loadReports();
+</script>
+</body>
+</html>

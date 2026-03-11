@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sales Reps – CRM Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f0f2f5;--surface:#fff;--surface2:#f8fafc;--border:#e2e8f0;--border2:#f1f5f9;--text:#0f172a;--text2:#475569;--text3:#94a3b8;--accent:#6366f1;--success:#10b981;--warning:#f59e0b;--danger:#ef4444;--sidebar-w:240px;--nav-h:64px;--radius:14px;--font:'Plus Jakarta Sans',sans-serif}
+*{box-sizing:border-box;margin:0;padding:0;font-family:var(--font)}
+body{background:var(--bg);color:var(--text);min-height:100vh}
+.topbar{position:fixed;top:0;left:0;right:0;height:var(--nav-h);background:#0f172a;border-bottom:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;padding:0 24px 0 0;z-index:200}
+.topbar-brand{width:var(--sidebar-w);display:flex;align-items:center;gap:10px;padding:0 24px;flex-shrink:0;font-size:18px;font-weight:800;color:white}
+.logo-icon{width:34px;height:34px;background:linear-gradient(135deg,#6366f1,#8b5cf6);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:12px}
+.topbar-user{color:rgba(255,255,255,0.6);font-size:13px;font-weight:500}
+.topbar-user strong{color:white;font-weight:700}
+.topbar-btn{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);color:rgba(255,255,255,0.8);padding:7px 16px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font);transition:all 0.2s}
+.topbar-btn:hover{background:rgba(255,255,255,0.15);color:white}
+.sidebar{position:fixed;top:var(--nav-h);left:0;bottom:0;width:var(--sidebar-w);background:#0f172a;border-right:1px solid rgba(255,255,255,0.05);padding:20px 12px;overflow-y:auto;z-index:100;display:flex;flex-direction:column;gap:2px}
+.sidebar-section{font-size:10px;font-weight:700;letter-spacing:1.5px;color:rgba(255,255,255,0.25);text-transform:uppercase;padding:12px 12px 6px;margin-top:8px}
+.sidebar a{display:flex;align-items:center;gap:10px;padding:10px 12px;color:rgba(255,255,255,0.5);text-decoration:none;font-weight:500;font-size:13.5px;border-radius:9px;transition:all 0.15s}
+.sidebar a:hover{background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.85)}
+.sidebar a.active{background:linear-gradient(135deg,rgba(99,102,241,0.25),rgba(139,92,246,0.15));color:#a5b4fc;border:1px solid rgba(99,102,241,0.25)}
+.s-icon{font-size:16px;flex-shrink:0}
+.main{margin-left:var(--sidebar-w);padding-top:var(--nav-h);min-height:100vh}
+.page{padding:28px 32px}
+.page-hdr{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px;flex-wrap:wrap;gap:12px}
+.page-hdr h1{font-size:26px;font-weight:800;letter-spacing:-0.5px}
+.page-hdr p{font-size:13.5px;color:var(--text3);margin-top:3px}
+.sr-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:18px}
+.sr-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:22px;box-shadow:0 1px 3px rgba(0,0,0,0.06);transition:all 0.2s;animation:fadeUp 0.35s ease both;position:relative;overflow:hidden}
+.sr-card::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#6366f1,#8b5cf6)}
+.sr-card:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,0,0,0.09)}
+.sr-avatar{width:56px;height:56px;border-radius:14px;background:linear-gradient(135deg,#6366f1,#8b5cf6);display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:900;color:white;margin-bottom:14px}
+.sr-name{font-size:16px;font-weight:800;margin-bottom:3px}
+.sr-meta{font-size:12.5px;color:var(--text3);margin-bottom:12px}
+.sr-info{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
+.sr-info-row{display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--text2)}
+.sr-footer{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:14px;padding-top:14px;border-top:1px solid var(--border2)}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:100px;font-size:11.5px;font-weight:700}
+.badge-green{background:#dcfce7;color:#15803d}
+.badge-red{background:#fee2e2;color:#b91c1c}
+.task-pill{background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:6px 10px;font-size:11.5px;font-weight:700;color:var(--text2);text-align:center}
+.task-pill span{display:block;font-size:18px;font-weight:900;color:var(--text);line-height:1}
+.btn{display:inline-flex;align-items:center;gap:7px;padding:9px 18px;border-radius:9px;font-size:13.5px;font-weight:600;cursor:pointer;border:none;font-family:var(--font);transition:all 0.18s;text-decoration:none;white-space:nowrap}
+.btn-sm{padding:6px 13px;font-size:12px;border-radius:7px}
+.btn-primary{background:linear-gradient(135deg,#6366f1,#8b5cf6);color:white}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(99,102,241,0.38);color:white}
+.btn-ghost{background:var(--surface2);color:var(--text2);border:1.5px solid var(--border)}
+.btn-ghost:hover{background:var(--border);color:var(--text)}
+.btn-danger{background:#fef2f2;color:var(--danger);border:1.5px solid #fecaca}
+.btn-danger:hover{background:var(--danger);color:white}
+.modal-overlay{position:fixed;inset:0;background:rgba(15,23,42,0.5);backdrop-filter:blur(4px);z-index:500;display:flex;align-items:center;justify-content:center;padding:24px;opacity:0;pointer-events:none;transition:opacity 0.2s}
+.modal-overlay.open{opacity:1;pointer-events:all}
+.modal-box{background:var(--surface);border-radius:20px;width:100%;max-width:540px;max-height:90vh;overflow-y:auto;box-shadow:0 25px 60px rgba(0,0,0,0.15);transform:scale(0.96);transition:transform 0.2s}
+.modal-overlay.open .modal-box{transform:scale(1)}
+.modal-hdr{padding:22px 26px;border-bottom:1px solid var(--border2);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:white;z-index:1}
+.modal-hdr h3{font-size:18px;font-weight:800}
+.modal-close{width:32px;height:32px;border-radius:8px;background:var(--surface2);border:1px solid var(--border);cursor:pointer;font-size:16px}
+.modal-body{padding:24px 26px}
+.modal-footer{padding:16px 26px;border-top:1px solid var(--border2);display:flex;justify-content:flex-end;gap:10px;position:sticky;bottom:0;background:white}
+.form-group{margin-bottom:16px}
+.form-label{display:block;font-size:12.5px;font-weight:700;color:var(--text2);margin-bottom:7px}
+.form-control{width:100%;padding:10px 14px;border:2px solid var(--border);border-radius:10px;font-family:var(--font);font-size:14px;color:var(--text);background:var(--surface2);outline:none;transition:all 0.18s}
+.form-control:focus{border-color:var(--accent);background:white;box-shadow:0 0 0 3px rgba(99,102,241,0.1)}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.alert{padding:12px 16px;border-radius:10px;font-size:13px;font-weight:600;margin-bottom:14px;display:none}
+.alert-danger{background:#fef2f2;border:1px solid #fecaca;color:#b91c1c}
+.alert-success{background:#f0fdf4;border:1px solid #bbf7d0;color:#15803d}
+.info-box{background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:12px 14px;font-size:12.5px;color:#1d4ed8;margin-bottom:16px}
+.section-divider{border-top:1px solid var(--border2);margin:16px 0;padding-top:16px}
+.section-title{font-size:13px;font-weight:700;color:var(--text2);margin-bottom:12px}
+.empty{text-align:center;padding:60px 32px;color:var(--text3)}
+.empty-icon{font-size:48px;margin-bottom:14px;opacity:0.6}
+.empty h4{font-size:16px;font-weight:700;color:var(--text2);margin-bottom:6px}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="topbar-brand"><div class="logo-icon">⚡</div>CRM Pro</div>
+  <div class="topbar-right">
+    <span class="topbar-user">Hello, <strong id="userName">Admin</strong></span>
+    <button class="topbar-btn" onclick="logout()">Sign Out</button>
+  </div>
+</div>
+<div class="sidebar">
+  <div class="sidebar-section">Main</div>
+  <a href="admin-dashboard.html"><span class="s-icon">📊</span>Dashboard</a>
+  <a href="kanban.html"><span class="s-icon">📋</span>Kanban Board</a>
+  <div class="sidebar-section">Management</div>
+  <a href="sales-reps.html" class="active"><span class="s-icon">👥</span>Sales Reps</a>
+  <a href="customers.html"><span class="s-icon">🧑</span>Customers</a>
+  <a href="tasks.html"><span class="s-icon">✅</span>All Tasks</a>
+  <div class="sidebar-section">Admin</div>
+  <a href="service-requests.html"><span class="s-icon">📬</span>Service Requests</a>
+  <a href="reports.html"><span class="s-icon">📈</span>Reports</a>
+  <div class="sidebar-section">Site</div>
+  <a href="index.html" target="_blank"><span class="s-icon">🌐</span>Landing Page</a>
+</div>
+<div class="main"><div class="page">
+  <div class="page-hdr">
+    <div><h1>👥 Sales Reps</h1><p id="srSubtitle">Loading...</p></div>
+    <button class="btn btn-primary" onclick="openAddModal()">+ Add Sales Rep</button>
+  </div>
+  <div class="sr-grid" id="srGrid">
+    <div style="grid-column:1/-1;text-align:center;padding:60px;color:var(--text3)">
+      <div style="font-size:36px;margin-bottom:10px">⏳</div><div style="font-weight:600">Loading...</div>
+    </div>
+  </div>
+</div></div>
+
+<!-- ADD MODAL -->
+<div class="modal-overlay" id="addModal">
+  <div class="modal-box">
+    <div class="modal-hdr"><h3>➕ Add Sales Rep</h3><button class="modal-close" onclick="closeAdd()">✕</button></div>
+    <div class="modal-body">
+      <div class="info-box">ℹ️ The SR will use this email &amp; password to log in to CRM Pro.</div>
+      <div class="alert alert-danger" id="addErr"></div>
+      <div class="grid-2">
+        <div class="form-group"><label class="form-label">Full Name *</label><input id="addName" class="form-control" placeholder="Jane Smith"></div>
+        <div class="form-group"><label class="form-label">Email *</label><input id="addEmail" class="form-control" type="email" placeholder="jane@company.com"></div>
+      </div>
+      <div class="grid-2">
+        <div class="form-group"><label class="form-label">Password *</label><input id="addPassword" class="form-control" type="password" placeholder="Min 6 characters"></div>
+        <div class="form-group"><label class="form-label">Confirm Password *</label><input id="addConfirm" class="form-control" type="password" placeholder="Repeat password"></div>
+      </div>
+      <div class="grid-2">
+        <div class="form-group"><label class="form-label">Phone</label><input id="addPhone" class="form-control" placeholder="+91 98765 43210"></div>
+        <div class="form-group"><label class="form-label">City</label><input id="addCity" class="form-control" placeholder="Bengaluru"></div>
+      </div>
+      <div class="grid-2">
+        <div class="form-group"><label class="form-label">Expertise</label><input id="addExpertise" class="form-control" placeholder="Enterprise Sales"></div>
+        <div class="form-group"><label class="form-label">Availability</label>
+          <select id="addAvailable" class="form-control"><option value="true">🟢 Available</option><option value="false">🔴 Busy</option></select>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeAdd()">Cancel</button>
+      <button class="btn btn-primary" onclick="submitAdd()">Create Sales Rep</button>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT MODAL -->
+<div class="modal-overlay" id="editModal">
+  <div class="modal-box">
+    <div class="modal-hdr"><h3>✏️ Edit Sales Rep</h3><button class="modal-close" onclick="closeEdit()">✕</button></div>
+    <div class="modal-body">
+      <div class="alert alert-danger" id="editErr"></div>
+      <div class="alert alert-success" id="editOk"></div>
+      <input type="hidden" id="editId">
+      <div class="grid-2">
+        <div class="form-group"><label class="form-label">Full Name *</label><input id="editName" class="form-control"></div>
+        <div class="form-group"><label class="form-label">Email *</label><input id="editEmail" class="form-control" type="email"></div>
+      </div>
+      <div class="grid-2">
+        <div class="form-group"><label class="form-label">Phone</label><input id="editPhone" class="form-control"></div>
+        <div class="form-group"><label class="form-label">City</label><input id="editCity" class="form-control"></div>
+      </div>
+      <div class="grid-2">
+        <div class="form-group"><label class="form-label">Expertise</label><input id="editExpertise" class="form-control"></div>
+        <div class="form-group"><label class="form-label">Availability</label>
+          <select id="editAvailable" class="form-control"><option value="true">🟢 Available</option><option value="false">🔴 Busy</option></select>
+        </div>
+      </div>
+      <div class="section-divider">
+        <div class="section-title">🔑 Reset Password (leave blank to keep current)</div>
+        <div class="grid-2">
+          <div class="form-group" style="margin-bottom:0"><label class="form-label">New Password</label><input id="editNewPw" class="form-control" type="password" placeholder="New password"></div>
+          <div class="form-group" style="margin-bottom:0"><label class="form-label">Confirm Password</label><input id="editConfirmPw" class="form-control" type="password" placeholder="Confirm password"></div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeEdit()">Cancel</button>
+      <button class="btn btn-primary" onclick="submitEdit()">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const API_BASE='http://localhost:5271/api';
+function getToken(){return localStorage.getItem('token')}
+function logout(){localStorage.clear();window.location.href='login.html'}
+if(!getToken())window.location.href='login.html';
+if(localStorage.getItem('role')!=='Admin')window.location.href='sr-dashboard.html?id='+localStorage.getItem('userId');
+document.getElementById('userName').textContent=localStorage.getItem('userName')||'Admin';
+
+const Api={
+  get:async(url)=>{const r=await fetch(API_BASE+url,{headers:{'Content-Type':'application/json','Authorization':'Bearer '+getToken()}});if(r.status===401){logout();return null}return r.json()},
+  post:async(url,body)=>{const r=await fetch(API_BASE+url,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+getToken()},body:JSON.stringify(body)});if(!r.ok)throw new Error(await r.text());return r.json()},
+  postPublic:async(url,body)=>{const r=await fetch(API_BASE+url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});if(!r.ok)throw new Error(await r.text());return r.json()},
+  put:async(url,body)=>{const r=await fetch(API_BASE+url,{method:'PUT',headers:{'Content-Type':'application/json','Authorization':'Bearer '+getToken()},body:JSON.stringify(body)});if(!r.ok)throw new Error(await r.text());return r.json()},
+  delete:async(url)=>{const r=await fetch(API_BASE+url,{method:'DELETE',headers:{'Content-Type':'application/json','Authorization':'Bearer '+getToken()}});if(!r.ok)throw new Error(await r.text());return r.json()}
+};
+
+async function loadSRs(){
+  const srs=await Api.get('/salesrep')||[];
+  document.getElementById('srSubtitle').textContent=`${srs.length} sales rep${srs.length!==1?'s':''} in your team`;
+  const grid=document.getElementById('srGrid');
+  if(!srs.length){
+    grid.innerHTML=`<div class="empty" style="grid-column:1/-1"><div class="empty-icon">👥</div><h4>No sales reps yet</h4><p>Add your first sales rep to get started</p><button class="btn btn-primary" style="margin-top:16px" onclick="openAddModal()">+ Add Sales Rep</button></div>`;
+    return;
+  }
+  grid.innerHTML=srs.map((sr,i)=>`
+    <div class="sr-card" style="animation-delay:${i*0.06}s">
+      <div class="sr-avatar">${sr.name.charAt(0).toUpperCase()}</div>
+      <div class="sr-name">${sr.name}</div>
+      <div class="sr-meta">${sr.expertise||'Sales Representative'}</div>
+      <div class="sr-info">
+        <div class="sr-info-row"><span>📧</span><span>${sr.email}</span></div>
+        ${sr.phone?`<div class="sr-info-row"><span>📞</span><span>${sr.phone}</span></div>`:''}
+        ${sr.city?`<div class="sr-info-row"><span>📍</span><span>${sr.city}</span></div>`:''}
+      </div>
+      <div style="display:flex;gap:8px;margin-bottom:14px">
+        <div class="task-pill"><span>${sr.taskCount||0}</span>pending</div>
+        <span class="badge ${sr.isAvailable?'badge-green':'badge-red'}" style="align-self:center">${sr.isAvailable?'🟢 Available':'🔴 Busy'}</span>
+      </div>
+      <div class="sr-footer">
+        <a href="sr-profile.html?id=${sr.id}" class="btn btn-ghost btn-sm">View Profile</a>
+        <div style="display:flex;gap:6px">
+          <button class="btn btn-ghost btn-sm" onclick='openEdit(${JSON.stringify(sr)})'>✏️ Edit</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteSR(${sr.id},'${sr.name.replace(/'/g,"\\'")}')">🗑</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function openAddModal(){document.getElementById('addModal').classList.add('open')}
+function closeAdd(){document.getElementById('addModal').classList.remove('open');document.getElementById('addErr').style.display='none'}
+
+async function submitAdd(){
+  const name=document.getElementById('addName').value.trim();
+  const email=document.getElementById('addEmail').value.trim();
+  const password=document.getElementById('addPassword').value;
+  const confirm=document.getElementById('addConfirm').value;
+  const errEl=document.getElementById('addErr');
+  errEl.style.display='none';
+  if(!name||!email||!password){errEl.textContent='⚠️ Name, email and password are required.';errEl.style.display='block';return}
+  if(password.length<6){errEl.textContent='⚠️ Password must be at least 6 characters.';errEl.style.display='block';return}
+  if(password!==confirm){errEl.textContent='⚠️ Passwords do not match.';errEl.style.display='block';return}
+  try{
+    await Api.postPublic('/auth/register',{
+      name,email,password,
+      phone:document.getElementById('addPhone').value.trim(),
+      city:document.getElementById('addCity').value.trim(),
+      expertise:document.getElementById('addExpertise').value.trim()
+    });
+    closeAdd();
+    ['addName','addEmail','addPassword','addConfirm','addPhone','addCity','addExpertise'].forEach(id=>document.getElementById(id).value='');
+    await loadSRs();
+  }catch(e){
+    errEl.textContent='⚠️ '+(e.message.toLowerCase().includes('already')?'Email already registered.':e.message);
+    errEl.style.display='block';
+  }
+}
+
+function openEdit(sr){
+  document.getElementById('editId').value=sr.id;
+  document.getElementById('editName').value=sr.name;
+  document.getElementById('editEmail').value=sr.email;
+  document.getElementById('editPhone').value=sr.phone||'';
+  document.getElementById('editCity').value=sr.city||'';
+  document.getElementById('editExpertise').value=sr.expertise||'';
+  document.getElementById('editAvailable').value=sr.isAvailable?'true':'false';
+  document.getElementById('editNewPw').value='';
+  document.getElementById('editConfirmPw').value='';
+  document.getElementById('editErr').style.display='none';
+  document.getElementById('editOk').style.display='none';
+  document.getElementById('editModal').classList.add('open');
+}
+function closeEdit(){document.getElementById('editModal').classList.remove('open')}
+
+async function submitEdit(){
+  const id=document.getElementById('editId').value;
+  const newPw=document.getElementById('editNewPw').value;
+  const confirmPw=document.getElementById('editConfirmPw').value;
+  const errEl=document.getElementById('editErr');
+  const okEl=document.getElementById('editOk');
+  errEl.style.display='none';okEl.style.display='none';
+  if(newPw&&newPw.length<6){errEl.textContent='⚠️ Password must be at least 6 characters.';errEl.style.display='block';return}
+  if(newPw&&newPw!==confirmPw){errEl.textContent='⚠️ Passwords do not match.';errEl.style.display='block';return}
+  try{
+    await Api.put(`/salesrep/${id}`,{
+      name:document.getElementById('editName').value.trim(),
+      email:document.getElementById('editEmail').value.trim(),
+      phone:document.getElementById('editPhone').value.trim(),
+      city:document.getElementById('editCity').value.trim(),
+      expertise:document.getElementById('editExpertise').value.trim(),
+      isAvailable:document.getElementById('editAvailable').value==='true'
+    });
+    if(newPw) await Api.put(`/salesrep/${id}/password`,{newPassword:newPw});
+    okEl.textContent='✅ Changes saved!';okEl.style.display='block';
+    await loadSRs();
+    setTimeout(closeEdit,1000);
+  }catch(e){errEl.textContent='⚠️ '+e.message;errEl.style.display='block'}
+}
+
+async function deleteSR(id,name){
+  if(!confirm(`Delete "${name}"? All their tasks will also be deleted.`))return;
+  try{await Api.delete('/salesrep/'+id);await loadSRs()}
+  catch(e){alert('Failed: '+e.message)}
+}
+
+loadSRs();
+</script>
+</body>
+</html>

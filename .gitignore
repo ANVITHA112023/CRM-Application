@@ -1,0 +1,15 @@
+# Build outputs
+bin/
+obj/
+
+# VS Code
+.vs/
+*.user
+
+# Secrets (never commit these!)
+appsettings.Development.json
+*.env
+
+# Database files
+*.db
+*.sqlite

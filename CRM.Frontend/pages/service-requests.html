@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Service Requests – CRM Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f0f2f5;--surface:#fff;--surface2:#f8fafc;--border:#e2e8f0;--border2:#f1f5f9;--text:#0f172a;--text2:#475569;--text3:#94a3b8;--accent:#6366f1;--success:#10b981;--warning:#f59e0b;--danger:#ef4444;--sidebar-w:240px;--nav-h:64px;--radius:14px;--font:'Plus Jakarta Sans',sans-serif}
+*{box-sizing:border-box;margin:0;padding:0;font-family:var(--font)}
+body{background:var(--bg);color:var(--text);min-height:100vh}
+.topbar{position:fixed;top:0;left:0;right:0;height:var(--nav-h);background:#0f172a;border-bottom:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;padding:0 24px 0 0;z-index:200}
+.topbar-brand{width:var(--sidebar-w);display:flex;align-items:center;gap:10px;padding:0 24px;flex-shrink:0;font-size:18px;font-weight:800;color:white}
+.logo-icon{width:34px;height:34px;background:linear-gradient(135deg,#6366f1,#8b5cf6);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:12px}
+.topbar-user{color:rgba(255,255,255,0.6);font-size:13px;font-weight:500}
+.topbar-user strong{color:white;font-weight:700}
+.topbar-btn{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);color:rgba(255,255,255,0.8);padding:7px 16px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font);transition:all 0.2s}
+.topbar-btn:hover{background:rgba(255,255,255,0.15);color:white}
+.sidebar{position:fixed;top:var(--nav-h);left:0;bottom:0;width:var(--sidebar-w);background:#0f172a;border-right:1px solid rgba(255,255,255,0.05);padding:20px 12px;overflow-y:auto;z-index:100;display:flex;flex-direction:column;gap:2px}
+.sidebar-section{font-size:10px;font-weight:700;letter-spacing:1.5px;color:rgba(255,255,255,0.25);text-transform:uppercase;padding:12px 12px 6px;margin-top:8px}
+.sidebar a{display:flex;align-items:center;gap:10px;padding:10px 12px;color:rgba(255,255,255,0.5);text-decoration:none;font-weight:500;font-size:13.5px;border-radius:9px;transition:all 0.15s}
+.sidebar a:hover{background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.85)}
+.sidebar a.active{background:linear-gradient(135deg,rgba(99,102,241,0.25),rgba(139,92,246,0.15));color:#a5b4fc;border:1px solid rgba(99,102,241,0.25)}
+.s-icon{font-size:16px;flex-shrink:0}
+.main{margin-left:var(--sidebar-w);padding-top:var(--nav-h);min-height:100vh}
+.page{padding:28px 32px}
+
+/* STAT ROW */
+.stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:22px}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;box-shadow:0 1px 3px rgba(0,0,0,0.06);position:relative;overflow:hidden;animation:fadeUp 0.35s ease both;display:flex;align-items:center;gap:16px}
+.stat-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px}
+.stat-card.c1::after{background:linear-gradient(90deg,#6366f1,#8b5cf6)}
+.stat-card.c2::after{background:linear-gradient(90deg,#f59e0b,#fbbf24)}
+.stat-card.c3::after{background:linear-gradient(90deg,#10b981,#34d399)}
+.sc-icon{width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.sc-val{font-size:30px;font-weight:900;line-height:1;margin-bottom:2px}
+.sc-lbl{font-size:12px;color:var(--text3);font-weight:600}
+
+/* INFO BANNER */
+.info-banner{background:linear-gradient(135deg,#eff6ff,#f0fdf4);border:1px solid #bfdbfe;border-radius:var(--radius);padding:14px 18px;margin-bottom:20px;display:flex;align-items:center;gap:12px;font-size:13px;color:#1e40af}
+.info-banner strong{font-weight:700}
+
+/* FILTER BAR */
+.filter-bar{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 20px;margin-bottom:20px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;box-shadow:0 1px 3px rgba(0,0,0,0.06)}
+.filter-chip{padding:6px 14px;border-radius:100px;border:1.5px solid var(--border);background:var(--surface2);font-size:12.5px;font-weight:600;color:var(--text2);cursor:pointer;transition:all 0.15s}
+.filter-chip.active,.filter-chip:hover{background:var(--accent);color:white;border-color:var(--accent)}
+.filter-search{padding:9px 14px;border:1.5px solid var(--border);border-radius:9px;font-family:var(--font);font-size:13px;outline:none;background:var(--surface2);color:var(--text);min-width:220px;transition:all 0.2s}
+.filter-search:focus{border-color:var(--accent);background:white;box-shadow:0 0 0 3px rgba(99,102,241,0.1)}
+
+/* TABLE */
+.tbl-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:0 1px 3px rgba(0,0,0,0.06);overflow:hidden}
+.tbl{width:100%;border-collapse:collapse}
+.tbl th{font-size:11px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:var(--text3);padding:13px 18px;border-bottom:1px solid var(--border);text-align:left;background:var(--surface2)}
+.tbl td{padding:14px 18px;border-bottom:1px solid var(--border2);font-size:13.5px;vertical-align:middle}
+.tbl tbody tr:last-child td{border-bottom:none}
+.tbl tbody tr:hover td{background:#f8f9ff}
+.tbl-footer{padding:14px 20px;border-top:1px solid var(--border2);background:var(--surface2);font-size:12.5px;color:var(--text3);font-weight:600}
+
+/* BADGE */
+.badge{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:100px;font-size:11.5px;font-weight:700}
+.badge-amber{background:#fef9c3;color:#a16207}
+.badge-green{background:#dcfce7;color:#15803d}
+.badge-red{background:#fee2e2;color:#b91c1c}
+.badge-indigo{background:#e0e7ff;color:#4338ca}
+
+/* CUSTOMER LINK */
+.cust-link{display:inline-flex;align-items:center;gap:5px;background:#f5f3ff;border:1px solid #c7d2fe;border-radius:7px;padding:4px 10px;font-size:12px;font-weight:700;color:#4338ca;text-decoration:none;transition:all 0.15s}
+.cust-link:hover{background:#4338ca;color:white}
+.cust-new{display:inline-flex;align-items:center;gap:5px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:7px;padding:4px 10px;font-size:12px;font-weight:700;color:#15803d}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:8px;font-size:12.5px;font-weight:600;cursor:pointer;border:none;font-family:var(--font);transition:all 0.18s;text-decoration:none;white-space:nowrap}
+.btn-sm{padding:5px 11px;font-size:11.5px;border-radius:7px}
+.btn-ghost{background:var(--surface2);color:var(--text2);border:1.5px solid var(--border)}
+.btn-ghost:hover{background:var(--border);color:var(--text)}
+.btn-primary{background:linear-gradient(135deg,#6366f1,#8b5cf6);color:white}
+.btn-primary:hover{color:white;transform:translateY(-1px)}
+.btn-danger{background:#fef2f2;color:var(--danger);border:1px solid #fecaca}
+.btn-danger:hover{background:var(--danger);color:white}
+.btn-success{background:#dcfce7;color:#15803d;border:1px solid #bbf7d0}
+.btn-success:hover{background:#15803d;color:white}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(15,23,42,0.5);backdrop-filter:blur(4px);z-index:500;display:flex;align-items:center;justify-content:center;padding:24px;opacity:0;pointer-events:none;transition:opacity 0.2s}
+.modal-overlay.open{opacity:1;pointer-events:all}
+.modal-box{background:var(--surface);border-radius:20px;width:100%;max-width:500px;max-height:90vh;overflow-y:auto;box-shadow:0 25px 60px rgba(0,0,0,0.15);transform:scale(0.96);transition:transform 0.2s}
+.modal-overlay.open .modal-box{transform:scale(1)}
+.modal-hdr{padding:20px 24px;border-bottom:1px solid var(--border2);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:white;z-index:1}
+.modal-hdr h3{font-size:17px;font-weight:800}
+.modal-close{width:30px;height:30px;border-radius:8px;background:var(--surface2);border:1px solid var(--border);cursor:pointer;font-size:15px}
+.modal-body{padding:22px 24px}
+.modal-footer{padding:14px 24px;border-top:1px solid var(--border2);display:flex;justify-content:flex-end;gap:10px;position:sticky;bottom:0;background:white}
+.form-group{margin-bottom:14px}
+.form-label{display:block;font-size:12px;font-weight:700;color:var(--text2);margin-bottom:6px}
+.form-control{width:100%;padding:10px 13px;border:2px solid var(--border);border-radius:9px;font-family:var(--font);font-size:13.5px;color:var(--text);background:var(--surface2);outline:none;transition:all 0.18s}
+.form-control:focus{border-color:var(--accent);background:white;box-shadow:0 0 0 3px rgba(99,102,241,0.1)}
+.view-field{display:flex;gap:10px;padding:10px 13px;background:var(--surface2);border-radius:8px;margin-bottom:8px;font-size:13.5px}
+.view-field-label{font-weight:700;color:var(--text3);min-width:80px;font-size:11.5px;text-transform:uppercase;letter-spacing:0.5px;padding-top:1px;flex-shrink:0}
+.view-field-val{color:var(--text);font-weight:600;line-height:1.5}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-brand"><div class="logo-icon">⚡</div>CRM Pro</div>
+  <div class="topbar-right">
+    <span class="topbar-user">Hello, <strong id="userName">Admin</strong></span>
+    <button class="topbar-btn" onclick="logout()">Sign Out</button>
+  </div>
+</div>
+
+<div class="sidebar">
+  <div class="sidebar-section">Main</div>
+  <a href="admin-dashboard.html"><span class="s-icon">📊</span>Dashboard</a>
+  <a href="kanban.html"><span class="s-icon">📋</span>Kanban Board</a>
+  <div class="sidebar-section">Management</div>
+  <a href="sales-reps.html"><span class="s-icon">👥</span>Sales Reps</a>
+  <a href="customers.html"><span class="s-icon">🧑</span>Customers</a>
+  <a href="tasks.html"><span class="s-icon">✅</span>All Tasks</a>
+  <div class="sidebar-section">Admin</div>
+  <a href="service-requests.html" class="active"><span class="s-icon">📬</span>Service Requests</a>
+  <a href="reports.html"><span class="s-icon">📈</span>Reports</a>
+  <div class="sidebar-section">Site</div>
+  <a href="index.html" target="_blank"><span class="s-icon">🌐</span>Landing Page</a>
+</div>
+
+<div class="main"><div class="page">
+
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;flex-wrap:wrap;gap:12px">
+    <div>
+      <h1 style="font-size:26px;font-weight:800;letter-spacing:-0.5px">📬 Service Requests</h1>
+      <p style="font-size:13.5px;color:var(--text3);margin-top:3px" id="srSubtitle">Loading...</p>
+    </div>
+    <button class="btn btn-ghost" onclick="loadRequests()">↻ Refresh</button>
+  </div>
+
+  <!-- INFO BANNER -->
+  <div class="info-banner">
+    <span style="font-size:20px">💡</span>
+    <span>When a visitor submits the <strong>homepage contact form</strong>, they are <strong>automatically added as a Customer</strong> and their request appears here.</span>
+  </div>
+
+  <!-- STATS -->
+  <div class="stat-row">
+    <div class="stat-card c1">
+      <div class="sc-icon" style="background:#e0e7ff">📬</div>
+      <div><div class="sc-val" id="s-total" style="color:#6366f1">–</div><div class="sc-lbl">Total Requests</div></div>
+    </div>
+    <div class="stat-card c2">
+      <div class="sc-icon" style="background:#fef9c3">⏳</div>
+      <div><div class="sc-val" id="s-ongoing" style="color:#f59e0b">–</div><div class="sc-lbl">Ongoing</div></div>
+    </div>
+    <div class="stat-card c3">
+      <div class="sc-icon" style="background:#dcfce7">✅</div>
+      <div><div class="sc-val" id="s-resolved" style="color:#10b981">–</div><div class="sc-lbl">Resolved</div></div>
+    </div>
+  </div>
+
+  <!-- FILTERS -->
+  <div class="filter-bar">
+    <span style="font-size:12px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px">Status:</span>
+    <button class="filter-chip active" onclick="setFilter('all',this)">All</button>
+    <button class="filter-chip" onclick="setFilter('Ongoing',this)">⏳ Ongoing</button>
+    <button class="filter-chip" onclick="setFilter('Resolved',this)">✅ Resolved</button>
+    <button class="filter-chip" onclick="setFilter('Cancelled',this)">❌ Cancelled</button>
+    <input id="searchInput" class="filter-search" placeholder="🔍 Search by name or email..." oninput="renderTable()" style="margin-left:auto">
+  </div>
+
+  <!-- TABLE -->
+  <div class="tbl-wrap">
+    <table class="tbl">
+      <thead>
+        <tr>
+          <th>Request</th>
+          <th>Contact</th>
+          <th>Message</th>
+          <th>Customer</th>
+          <th>Submitted</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="srTableBody">
+        <tr><td colspan="7" style="text-align:center;padding:60px;color:var(--text3)">
+          <div style="font-size:36px;margin-bottom:10px">⏳</div>
+          <div style="font-weight:600">Loading requests...</div>
+        </td></tr>
+      </tbody>
+    </table>
+    <div class="tbl-footer" id="tblFooter"></div>
+  </div>
+
+</div></div>
+
+<!-- VIEW / EDIT MODAL -->
+<div class="modal-overlay" id="editModal">
+  <div class="modal-box">
+    <div class="modal-hdr"><h3>📬 Service Request</h3><button class="modal-close" onclick="closeEdit()">✕</button></div>
+    <div class="modal-body">
+      <input type="hidden" id="editId">
+      <div class="view-field"><span class="view-field-label">From</span><span class="view-field-val" id="viewName">—</span></div>
+      <div class="view-field"><span class="view-field-label">Email</span><span class="view-field-val" id="viewEmail">—</span></div>
+      <div class="view-field"><span class="view-field-label">Message</span><span class="view-field-val" id="viewMessage">—</span></div>
+      <div class="view-field"><span class="view-field-label">Submitted</span><span class="view-field-val" id="viewDate">—</span></div>
+      <div class="view-field">
+        <span class="view-field-label">Customer</span>
+        <span class="view-field-val" id="viewCustomer">—</span>
+      </div>
+      <div class="form-group" style="margin-top:16px">
+        <label class="form-label">Update Status</label>
+        <select id="editStatus" class="form-control">
+          <option value="Ongoing">⏳ Ongoing</option>
+          <option value="Resolved">✅ Resolved</option>
+          <option value="Cancelled">❌ Cancelled</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeEdit()">Cancel</button>
+      <button class="btn btn-primary" onclick="submitEdit()">Save Status</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const API_BASE = 'http://localhost:5271/api';
+function getToken() { return localStorage.getItem('token'); }
+function logout() { localStorage.clear(); window.location.href = 'login.html'; }
+if (!getToken()) window.location.href = 'login.html';
+if (localStorage.getItem('role') !== 'Admin') window.location.href = 'sr-dashboard.html?id=' + localStorage.getItem('userId');
+document.getElementById('userName').textContent = localStorage.getItem('userName') || 'Admin';
+
+const Api = {
+  get: async (url) => {
+    const r = await fetch(API_BASE + url, { headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + getToken() } });
+    if (r.status === 401) { logout(); return null; }
+    return r.json();
+  },
+  put: async (url, body) => {
+    const r = await fetch(API_BASE + url, { method: 'PUT', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + getToken() }, body: JSON.stringify(body) });
+    if (!r.ok) throw new Error(await r.text());
+    return r.json();
+  },
+  delete: async (url) => {
+    const r = await fetch(API_BASE + url, { method: 'DELETE', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + getToken() } });
+    if (!r.ok) throw new Error(await r.text());
+    return r.json();
+  }
+};
+
+let allRequests = [];
+let statusFilter = 'all';
+
+async function loadRequests() {
+  allRequests = await Api.get('/servicerequest') || [];
+  const total    = allRequests.length;
+  const ongoing  = allRequests.filter(r => r.status === 'Ongoing').length;
+  const resolved = allRequests.filter(r => r.status === 'Resolved').length;
+  document.getElementById('s-total').textContent    = total;
+  document.getElementById('s-ongoing').textContent  = ongoing;
+  document.getElementById('s-resolved').textContent = resolved;
+  document.getElementById('srSubtitle').textContent = `${total} request${total !== 1 ? 's' : ''} from homepage visitors`;
+  renderTable();
+}
+
+function setFilter(val, btn) {
+  statusFilter = val;
+  document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+  renderTable();
+}
+
+function renderTable() {
+  const search = document.getElementById('searchInput').value.toLowerCase();
+  let requests = allRequests.filter(r => {
+    if (statusFilter !== 'all' && r.status !== statusFilter) return false;
+    if (search && !r.name.toLowerCase().includes(search) && !(r.email||'').toLowerCase().includes(search)) return false;
+    return true;
+  });
+
+  document.getElementById('tblFooter').textContent = `Showing ${requests.length} of ${allRequests.length} requests`;
+
+  const tbody = document.getElementById('srTableBody');
+  if (!requests.length) {
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:50px;color:var(--text3)">
+      <div style="font-size:36px;margin-bottom:10px">🔍</div>
+      <div style="font-weight:600">No requests match your filters</div>
+    </td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = requests.map((r, i) => {
+    const date = r.createdAt ? new Date(r.createdAt).toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' }) : '—';
+    const statusBadge =
+      r.status === 'Resolved'  ? '<span class="badge badge-green">✅ Resolved</span>' :
+      r.status === 'Cancelled' ? '<span class="badge badge-red">❌ Cancelled</span>' :
+                                  '<span class="badge badge-amber">⏳ Ongoing</span>';
+    const customerCell = r.customerId
+      ? `<a class="cust-link" href="customers.html">🧑 #${String(r.customerId).padStart(4,'0')}</a>`
+      : `<span class="cust-new">🆕 Auto-added</span>`;
+
+    return `<tr style="animation:fadeUp 0.25s ${i * 0.03}s ease both">
+      <td>
+        <div style="font-weight:800;font-size:13px">#SR-${String(r.id).padStart(4,'0')}</div>
+        <div style="font-size:11px;color:var(--text3);margin-top:2px">Via homepage form</div>
+      </td>
+      <td>
+        <div style="font-weight:700">${r.name}</div>
+        <div style="font-size:12px;color:var(--text3);margin-top:2px">${r.email}</div>
+      </td>
+      <td style="max-width:220px">
+        <div style="font-size:13px;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:200px">${r.message||'—'}</div>
+      </td>
+      <td>${customerCell}</td>
+      <td style="font-size:12.5px;color:var(--text2)">${date}</td>
+      <td>${statusBadge}</td>
+      <td>
+        <div style="display:flex;gap:6px">
+          <button class="btn btn-ghost btn-sm" onclick='openEdit(${JSON.stringify(r)})'>✏️ Update</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteRequest(${r.id})">🗑</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function openEdit(r) {
+  document.getElementById('editId').value = r.id;
+  document.getElementById('viewName').textContent    = r.name;
+  document.getElementById('viewEmail').textContent   = r.email;
+  document.getElementById('viewMessage').textContent = r.message || '(no message)';
+  document.getElementById('viewDate').textContent    = r.createdAt ? new Date(r.createdAt).toLocaleString('en-GB') : '—';
+  document.getElementById('editStatus').value        = r.status || 'Ongoing';
+  document.getElementById('viewCustomer').innerHTML  = r.customerId
+    ? `<a class="cust-link" href="customers.html">🧑 Customer #${String(r.customerId).padStart(4,'0')} — view in Customers page</a>`
+    : `<span class="cust-new">🆕 Auto-added to Customers when submitted</span>`;
+  document.getElementById('editModal').classList.add('open');
+}
+function closeEdit() { document.getElementById('editModal').classList.remove('open'); }
+
+async function submitEdit() {
+  const id = document.getElementById('editId').value;
+  const status = document.getElementById('editStatus').value;
+  try {
+    await Api.put('/servicerequest/' + id, { status });
+    closeEdit();
+    await loadRequests();
+  } catch(e) { alert('Failed: ' + e.message); }
+}
+
+async function deleteRequest(id) {
+  if (!confirm('Delete this service request?')) return;
+  try { await Api.delete('/servicerequest/' + id); await loadRequests(); }
+  catch(e) { alert('Failed: ' + e.message); }
+}
+
+loadRequests();
+</script>
+</body>
+</html>

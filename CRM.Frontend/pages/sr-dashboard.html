@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>My Dashboard – CRM Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f0f2f5;--surface:#fff;--surface2:#f8fafc;--border:#e2e8f0;--border2:#f1f5f9;--text:#0f172a;--text2:#475569;--text3:#94a3b8;--accent:#6366f1;--success:#10b981;--warning:#f59e0b;--danger:#ef4444;--sidebar-w:220px;--nav-h:64px;--radius:14px;--font:'Plus Jakarta Sans',sans-serif}
+*{box-sizing:border-box;margin:0;padding:0;font-family:var(--font)}
+body{background:var(--bg);color:var(--text);min-height:100vh}
+.topbar{position:fixed;top:0;left:0;right:0;height:var(--nav-h);background:#0f172a;display:flex;align-items:center;padding:0 24px 0 0;z-index:200;border-bottom:1px solid rgba(255,255,255,0.06)}
+.topbar-brand{width:var(--sidebar-w);display:flex;align-items:center;gap:10px;padding:0 20px;font-size:17px;font-weight:900;color:white}
+.logo-icon{width:32px;height:32px;background:linear-gradient(135deg,#6366f1,#8b5cf6);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:12px}
+.topbar-user{color:rgba(255,255,255,0.55);font-size:13px}
+.topbar-user strong{color:white;font-weight:700}
+.topbar-btn{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);color:rgba(255,255,255,0.8);padding:7px 16px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font)}
+.topbar-btn:hover{background:rgba(255,255,255,0.15);color:white}
+.sidebar{position:fixed;top:var(--nav-h);left:0;bottom:0;width:var(--sidebar-w);background:#0f172a;border-right:1px solid rgba(255,255,255,0.05);padding:18px 10px;overflow-y:auto;z-index:100;display:flex;flex-direction:column;gap:2px}
+.sidebar-section{font-size:10px;font-weight:700;letter-spacing:1.5px;color:rgba(255,255,255,0.22);text-transform:uppercase;padding:10px 12px 5px;margin-top:6px}
+.sidebar a{display:flex;align-items:center;gap:10px;padding:10px 12px;color:rgba(255,255,255,0.5);text-decoration:none;font-weight:500;font-size:13px;border-radius:9px;transition:all 0.15s}
+.sidebar a:hover{background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.85)}
+.sidebar a.active{background:linear-gradient(135deg,rgba(99,102,241,0.25),rgba(139,92,246,0.15));color:#a5b4fc;border:1px solid rgba(99,102,241,0.25)}
+.s-icon{font-size:15px;flex-shrink:0}
+.main{margin-left:var(--sidebar-w);padding-top:var(--nav-h);min-height:100vh}
+.page{padding:24px 28px}
+
+/* HERO */
+.hero{background:linear-gradient(135deg,#1e1b4b,#312e81,#4c1d95);border-radius:18px;padding:28px 32px;margin-bottom:22px;position:relative;overflow:hidden;color:white}
+.hero::before{content:'';position:absolute;top:-40px;right:-40px;width:200px;height:200px;background:radial-gradient(circle,rgba(255,255,255,0.07),transparent 70%);border-radius:50%}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);padding:4px 12px;border-radius:100px;font-size:12px;font-weight:700;margin-bottom:10px}
+.hero h1{font-size:24px;font-weight:900;letter-spacing:-0.5px;margin-bottom:4px}
+.hero p{font-size:13px;color:rgba(255,255,255,0.55);margin-bottom:18px}
+.hero-stats{display:flex;gap:28px;flex-wrap:wrap}
+.hero-stat-val{font-size:26px;font-weight:900;line-height:1}
+.hero-stat-lbl{font-size:11px;color:rgba(255,255,255,0.5);font-weight:600;margin-top:2px}
+
+/* STAT GRID */
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px;box-shadow:0 1px 3px rgba(0,0,0,0.06);position:relative;overflow:hidden;transition:transform 0.2s;animation:fadeUp 0.35s ease both}
+.stat-card:hover{transform:translateY(-2px)}
+.stat-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px}
+.stat-card.c1::after{background:linear-gradient(90deg,#6366f1,#8b5cf6)}
+.stat-card.c2::after{background:linear-gradient(90deg,#10b981,#34d399)}
+.stat-card.c3::after{background:linear-gradient(90deg,#f59e0b,#fbbf24)}
+.stat-card.c4::after{background:linear-gradient(90deg,#f43f5e,#fb7185)}
+.sc-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px;margin-bottom:10px}
+.sc-val{font-size:28px;font-weight:900;line-height:1;margin-bottom:3px}
+.sc-lbl{font-size:12px;color:var(--text3);font-weight:600}
+
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:0 1px 3px rgba(0,0,0,0.06);overflow:hidden;margin-bottom:16px;animation:fadeUp 0.35s ease both}
+.card-hdr{padding:15px 20px;border-bottom:1px solid var(--border2);display:flex;align-items:center;justify-content:space-between;gap:10px}
+.card-hdr h3{font-size:14.5px;font-weight:700}
+.card-body{padding:16px 20px}
+
+/* TASK */
+.task-item{display:flex;align-items:flex-start;gap:10px;padding:11px 0;border-bottom:1px solid var(--border2)}
+.task-item:last-child{border-bottom:none;padding-bottom:0}
+.task-info{flex:1}
+.task-title{font-size:13.5px;font-weight:700;margin-bottom:3px}
+.task-sub{font-size:11.5px;color:var(--text3)}
+.task-due{font-size:11px;font-weight:700;margin-top:3px}
+.task-due.ok{color:var(--success)}.task-due.overdue{color:var(--danger)}
+.task-done .task-title{text-decoration:line-through;color:var(--text3)}
+
+/* RANK */
+.rank-row{display:flex;align-items:center;gap:11px;padding:10px 0;border-bottom:1px solid var(--border2)}
+.rank-row:last-child{border-bottom:none;padding-bottom:0}
+.rank-num{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;flex-shrink:0}
+.rank-me{background:linear-gradient(135deg,#6366f1,#8b5cf6);color:white;box-shadow:0 3px 8px rgba(99,102,241,0.4)}
+.rank-gold{background:#fef9c3;color:#a16207}
+.rank-silver{background:#f1f5f9;color:#475569}
+.rank-bronze{background:#fef3c7;color:#92400e}
+.rank-other{background:var(--surface2);color:var(--text3);border:1px solid var(--border)}
+.rank-you-tag{font-size:9px;font-weight:700;background:linear-gradient(135deg,#6366f1,#8b5cf6);color:white;padding:2px 6px;border-radius:100px;margin-left:5px}
+.rank-bar-wrap{width:70px;height:5px;background:var(--border);border-radius:100px;overflow:hidden}
+.rank-bar{height:100%;border-radius:100px;background:linear-gradient(90deg,#6366f1,#8b5cf6)}
+
+/* BADGE */
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:100px;font-size:11.5px;font-weight:700}
+.badge-green{background:#dcfce7;color:#15803d}
+.badge-amber{background:#fef9c3;color:#a16207}
+.badge-red{background:#fee2e2;color:#b91c1c}
+.badge-indigo{background:#e0e7ff;color:#4338ca}
+
+/* PROGRESS */
+.progress-wrap{height:7px;background:var(--border);border-radius:100px;overflow:hidden}
+.progress-fill{height:100%;border-radius:100px;background:linear-gradient(90deg,#6366f1,#10b981);transition:width 1s ease}
+
+/* TABLE */
+.tbl{width:100%;border-collapse:collapse}
+.tbl th{font-size:10.5px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:var(--text3);padding:10px 14px;border-bottom:1px solid var(--border);text-align:left;background:var(--surface2)}
+.tbl td{padding:11px 14px;border-bottom:1px solid var(--border2);font-size:13px;vertical-align:middle}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tr:hover td{background:#f8f9ff}
+
+/* MOTIVATION */
+.motivation{border-radius:var(--radius);padding:16px 18px;margin-bottom:18px;display:flex;align-items:center;gap:12px;background:linear-gradient(135deg,#f0fdf4,#dcfce7);border:1px solid #bbf7d0}
+.motivation.warn{background:linear-gradient(135deg,#fffbeb,#fef9c3);border-color:#fde68a}
+.motivation-icon{font-size:28px;flex-shrink:0}
+.motivation h4{font-size:14px;font-weight:800;color:#15803d;margin-bottom:2px}
+.motivation.warn h4{color:#92400e}
+.motivation p{font-size:12.5px;color:#166534;line-height:1.5}
+.motivation.warn p{color:#78350f}
+
+/* PROFILE EDIT */
+.profile-avatar-big{width:72px;height:72px;border-radius:18px;background:linear-gradient(135deg,#6366f1,#8b5cf6);display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:900;color:white;flex-shrink:0}
+.info-row{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--surface2);border-radius:9px;font-size:13px;margin-bottom:8px}
+.info-row:last-child{margin-bottom:0}
+
+/* BTNS */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;border:none;font-family:var(--font);transition:all 0.18s;text-decoration:none;white-space:nowrap}
+.btn-sm{padding:5px 12px;font-size:12px;border-radius:7px}
+.btn-primary{background:linear-gradient(135deg,#6366f1,#8b5cf6);color:white}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(99,102,241,0.38);color:white}
+.btn-success{background:linear-gradient(135deg,#10b981,#059669);color:white}
+.btn-success:hover{color:white;transform:translateY(-1px)}
+.btn-ghost{background:var(--surface2);color:var(--text2);border:1.5px solid var(--border)}
+.btn-ghost:hover{background:var(--border);color:var(--text)}
+.btn-warning{background:#fffbeb;color:#92400e;border:1.5px solid #fde68a}
+.btn-warning:hover{background:#f59e0b;color:white;border-color:#f59e0b}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(15,23,42,0.5);backdrop-filter:blur(4px);z-index:500;display:flex;align-items:center;justify-content:center;padding:24px;opacity:0;pointer-events:none;transition:opacity 0.2s}
+.modal-overlay.open{opacity:1;pointer-events:all}
+.modal-box{background:var(--surface);border-radius:20px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;box-shadow:0 25px 60px rgba(0,0,0,0.15);transform:scale(0.96);transition:transform 0.2s}
+.modal-overlay.open .modal-box{transform:scale(1)}
+.modal-hdr{padding:20px 24px;border-bottom:1px solid var(--border2);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:white;z-index:1}
+.modal-hdr h3{font-size:17px;font-weight:800}
+.modal-close{width:30px;height:30px;border-radius:8px;background:var(--surface2);border:1px solid var(--border);cursor:pointer;font-size:15px}
+.modal-body{padding:22px 24px}
+.modal-footer{padding:14px 24px;border-top:1px solid var(--border2);display:flex;justify-content:flex-end;gap:10px;position:sticky;bottom:0;background:white}
+.form-group{margin-bottom:14px}
+.form-label{display:block;font-size:12px;font-weight:700;color:var(--text2);margin-bottom:6px}
+.form-control{width:100%;padding:10px 13px;border:2px solid var(--border);border-radius:9px;font-family:var(--font);font-size:13.5px;color:var(--text);background:var(--surface2);outline:none;transition:all 0.18s}
+.form-control:focus{border-color:var(--accent);background:white;box-shadow:0 0 0 3px rgba(99,102,241,0.1)}
+.grid-2-modal{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.alert{padding:10px 14px;border-radius:9px;font-size:13px;font-weight:600;margin-bottom:12px;display:none}
+.alert-danger{background:#fef2f2;border:1px solid #fecaca;color:#b91c1c}
+.alert-success{background:#f0fdf4;border:1px solid #bbf7d0;color:#15803d}
+.empty{text-align:center;padding:28px;color:var(--text3)}
+.empty-icon{font-size:32px;margin-bottom:6px;opacity:0.6}
+.section-divider{border-top:1px solid var(--border2);margin:14px 0;padding-top:14px}
+.section-title{font-size:12.5px;font-weight:700;color:var(--text2);margin-bottom:10px}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-brand"><div class="logo-icon">⚡</div>CRM Pro</div>
+  <div class="topbar-right">
+    <span class="topbar-user">Welcome, <strong id="topName">—</strong></span>
+    <button class="topbar-btn" onclick="openProfileModal()">⚙️ My Profile</button>
+    <button class="topbar-btn" onclick="logout()">Sign Out</button>
+  </div>
+</div>
+
+<div class="sidebar">
+  <div class="sidebar-section">My Space</div>
+  <a href="#" class="active" id="navHome"><span class="s-icon">🏠</span>Dashboard</a>
+  <a href="#" id="navTasks" onclick="scrollToSection('tasks-section',event)"><span class="s-icon">✅</span>My Tasks</a>
+  <a href="#" id="navRank" onclick="scrollToSection('rank-section',event)"><span class="s-icon">🏆</span>My Ranking</a>
+  <a href="#" id="navCustomers" onclick="scrollToSection('customers-section',event)"><span class="s-icon">🧑</span>Customers</a>
+  <div class="sidebar-section">Account</div>
+  <a href="#" onclick="openProfileModal()"><span class="s-icon">✏️</span>Edit Profile</a>
+  <a href="#" onclick="openPasswordModal()"><span class="s-icon">🔑</span>Change Password</a>
+</div>
+
+<div class="main">
+  <div class="page" id="mainPage">
+    <div style="text-align:center;padding:80px;color:var(--text3)">
+      <div style="font-size:40px;margin-bottom:12px">⏳</div>
+      <div style="font-weight:600">Loading your dashboard...</div>
+    </div>
+  </div>
+</div>
+
+<!-- COMPLETE TASK MODAL -->
+<div class="modal-overlay" id="completeModal">
+  <div class="modal-box">
+    <div class="modal-hdr"><h3>✅ Complete Task</h3><button class="modal-close" onclick="document.getElementById('completeModal').classList.remove('open')">✕</button></div>
+    <div class="modal-body"><p style="font-size:14px;color:var(--text2);line-height:1.6">Mark <strong id="completeTaskTitle">this task</strong> as completed?</p></div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="document.getElementById('completeModal').classList.remove('open')">Cancel</button>
+      <button class="btn btn-success" onclick="confirmComplete()">✓ Mark Complete</button>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT PROFILE MODAL -->
+<div class="modal-overlay" id="profileModal">
+  <div class="modal-box">
+    <div class="modal-hdr"><h3>✏️ Edit My Profile</h3><button class="modal-close" onclick="document.getElementById('profileModal').classList.remove('open')">✕</button></div>
+    <div class="modal-body">
+      <div class="alert alert-danger" id="profileErr"></div>
+      <div class="alert alert-success" id="profileOk"></div>
+      <div class="grid-2-modal">
+        <div class="form-group"><label class="form-label">Full Name *</label><input id="pName" class="form-control"></div>
+        <div class="form-group"><label class="form-label">Email *</label><input id="pEmail" class="form-control" type="email"></div>
+      </div>
+      <div class="grid-2-modal">
+        <div class="form-group"><label class="form-label">Phone</label><input id="pPhone" class="form-control" placeholder="+91 98765 43210"></div>
+        <div class="form-group"><label class="form-label">City</label><input id="pCity" class="form-control" placeholder="Bengaluru"></div>
+      </div>
+      <div class="grid-2-modal">
+        <div class="form-group"><label class="form-label">Expertise</label><input id="pExpertise" class="form-control" placeholder="Enterprise Sales"></div>
+        <div class="form-group"><label class="form-label">Availability</label>
+          <select id="pAvailable" class="form-control"><option value="true">🟢 Available</option><option value="false">🔴 Busy</option></select>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="document.getElementById('profileModal').classList.remove('open')">Cancel</button>
+      <button class="btn btn-primary" onclick="submitProfile()">Save Profile</button>
+    </div>
+  </div>
+</div>
+
+<!-- CHANGE PASSWORD MODAL -->
+<div class="modal-overlay" id="passwordModal">
+  <div class="modal-box">
+    <div class="modal-hdr"><h3>🔑 Change Password</h3><button class="modal-close" onclick="document.getElementById('passwordModal').classList.remove('open')">✕</button></div>
+    <div class="modal-body">
+      <div class="alert alert-danger" id="pwErr"></div>
+      <div class="alert alert-success" id="pwOk"></div>
+      <div class="form-group"><label class="form-label">New Password *</label><input id="pwNew" class="form-control" type="password" placeholder="Min 6 characters"></div>
+      <div class="form-group"><label class="form-label">Confirm New Password *</label><input id="pwConfirm" class="form-control" type="password" placeholder="Repeat new password"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="document.getElementById('passwordModal').classList.remove('open')">Cancel</button>
+      <button class="btn btn-primary" onclick="submitPassword()">Change Password</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const API_BASE = 'http://localhost:5271/api';
+const params = new URLSearchParams(window.location.search);
+let srId = parseInt(params.get('id')) || parseInt(localStorage.getItem('userId'));
+const myName = localStorage.getItem('userName') || 'Sales Rep';
+let srData = null;
+let pendingCompleteId = null;
+
+function getToken() { return localStorage.getItem('token'); }
+function logout() { localStorage.clear(); window.location.href = 'login.html'; }
+if (!getToken()) window.location.href = 'login.html';
+if (localStorage.getItem('role') === 'Admin') window.location.href = 'admin-dashboard.html';
+document.getElementById('topName').textContent = myName;
+
+function scrollToSection(id, e) {
+  if (e) e.preventDefault();
+  const el = document.getElementById(id);
+  if (el) el.scrollIntoView({ behavior: 'smooth' });
+  else setTimeout(() => { const el2 = document.getElementById(id); if (el2) el2.scrollIntoView({ behavior: 'smooth' }); }, 600);
+}
+
+const Api = {
+  get: async (url) => {
+    const r = await fetch(API_BASE + url, { headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + getToken() } });
+    if (r.status === 401) { logout(); return null; }
+    if (!r.ok) throw new Error('Failed: ' + r.status);
+    return r.json();
+  },
+  put: async (url, body) => {
+    const r = await fetch(API_BASE + url, { method: 'PUT', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + getToken() }, body: JSON.stringify(body) });
+    if (!r.ok) throw new Error(await r.text());
+    return r.json();
+  }
+};
+
+function getMotivation(rate, rank, total) {
+  if (rate === 100) return { cls: '', icon: '🏆', title: 'Perfect score!', msg: 'All tasks done. You are absolutely on fire — incredible work!' };
+  if (rank === 1) return { cls: '', icon: '👑', title: "You're #1!", msg: 'You lead the entire team! Stay focused and keep setting the pace.' };
+  if (rate >= 70) return { cls: '', icon: '🌟', title: 'Great progress!', msg: `Rank #${rank} of ${total}. A little more effort and you'll claim the top spot!` };
+  if (rate >= 40) return { cls: 'warn', icon: '💪', title: 'Keep pushing!', msg: `You're at rank #${rank}. Every task you complete boosts your ranking!` };
+  return { cls: 'warn', icon: '🚀', title: 'Time to shine!', msg: 'Tasks are waiting for you. Start completing them to climb the leaderboard!' };
+}
+
+async function loadDashboard() {
+  try {
+    const [sr, dashData, allCustomers] = await Promise.all([
+      Api.get('/salesrep/' + srId),
+      Api.get('/dashboard'),
+      Api.get('/customer')
+    ]);
+    if (!sr) return;
+    srData = sr;
+    // Only show customers assigned to this SR
+    const customers = (allCustomers || []).filter(c => c.salesRepId === srId);
+
+    const tasks = sr.tasks || [];
+    const pending = tasks.filter(t => t.status === 'Pending');
+    const completed = tasks.filter(t => t.status === 'Completed');
+    // Attach customer object from customerId stored in DB
+    tasks.forEach(t => {
+      t._customer = t.customerId ? (allCustomers||[]).find(c => c.id === t.customerId) || null : null;
+    });
+    const total = tasks.length;
+    const rate = total > 0 ? Math.round((completed.length / total) * 100) : 0;
+    const now = new Date();
+    const overdueTasks = pending.filter(t => t.dueDate && new Date(t.dueDate) < now);
+
+    const lb = dashData.leaderboard || [];
+    const myRankIdx = lb.findIndex(s => s.id === srId);
+    const myRank = myRankIdx >= 0 ? myRankIdx + 1 : lb.length + 1;
+    const maxScore = Math.max(...lb.map(s => s.tasksCompleted), 1);
+    const mot = getMotivation(rate, myRank, lb.length);
+
+    document.getElementById('mainPage').innerHTML = `
+      <!-- HERO -->
+      <div class="hero">
+        <div class="hero-badge">👤 Sales Rep</div>
+        <h1>Hello, ${sr.name}! 👋</h1>
+        <p>${new Date().toLocaleDateString('en-GB',{weekday:'long',year:'numeric',month:'long',day:'numeric'})}</p>
+        <div class="hero-stats">
+          <div><div class="hero-stat-val">${completed.length}</div><div class="hero-stat-lbl">Tasks Done</div></div>
+          <div><div class="hero-stat-val">${pending.length}</div><div class="hero-stat-lbl">Pending</div></div>
+          <div><div class="hero-stat-val">#${myRank}</div><div class="hero-stat-lbl">My Rank</div></div>
+          <div><div class="hero-stat-val">${rate}%</div><div class="hero-stat-lbl">Completion</div></div>
+        </div>
+      </div>
+
+      <!-- MOTIVATION -->
+      <div class="motivation ${mot.cls}">
+        <div class="motivation-icon">${mot.icon}</div>
+        <div><h4>${mot.title}</h4><p>${mot.msg}</p></div>
+      </div>
+
+      <!-- STATS -->
+      <div class="stat-grid">
+        <div class="stat-card c1"><div class="sc-icon" style="background:#e0e7ff">⏳</div><div class="sc-val" style="color:#6366f1">${pending.length}</div><div class="sc-lbl">Pending Tasks</div></div>
+        <div class="stat-card c2"><div class="sc-icon" style="background:#dcfce7">✅</div><div class="sc-val" style="color:#10b981">${completed.length}</div><div class="sc-lbl">Completed</div></div>
+        <div class="stat-card c3"><div class="sc-icon" style="background:#fef9c3">🏆</div><div class="sc-val" style="color:#f59e0b">#${myRank}</div><div class="sc-lbl">Team Rank</div></div>
+        <div class="stat-card c4"><div class="sc-icon" style="background:#ffe4e6">⚠️</div><div class="sc-val" style="color:#f43f5e">${overdueTasks.length}</div><div class="sc-lbl">Overdue</div></div>
+      </div>
+
+      <!-- TASKS + COMPLETED -->
+      <div class="grid-2" id="tasks-section">
+        <div class="card">
+          <div class="card-hdr">
+            <h3>⏳ Pending Tasks</h3>
+            <span style="font-size:12px;color:var(--text3)">${pending.length} task${pending.length!==1?'s':''}</span>
+          </div>
+          <div class="card-body" style="padding-top:4px">
+            ${pending.length === 0
+              ? `<div class="empty"><div class="empty-icon">🎉</div><p>All caught up! No pending tasks.</p></div>`
+              : pending.map((t,i) => {
+                  const due = t.dueDate ? new Date(t.dueDate) : null;
+                  const isOverdue = due && due < now;
+                  const dueStr = due ? due.toLocaleDateString('en-GB',{day:'2-digit',month:'short'}) : 'No date';
+                  return `<div class="task-item" style="animation:fadeUp 0.3s ${i*0.05}s ease both">
+                    <div style="flex:1">
+                      <div class="task-title">${t.title}</div>
+                      ${t._customer ? `<div style="display:inline-flex;align-items:center;gap:4px;background:#f5f3ff;border:1px solid #ddd6fe;border-radius:5px;padding:2px 7px;font-size:11px;font-weight:700;color:#6d28d9;margin-bottom:3px">🧑 ${t._customer.name}</div>` : ''}
+                      ${t.description ? `<div class="task-sub">${t.description.substring(0,55)}${t.description.length>55?'...':''}</div>` : ''}
+                      <div class="task-due ${isOverdue?'overdue':'ok'}">📅 ${dueStr}${isOverdue?' ⚠️ Overdue':''}</div>
+                    </div>
+                    <button class="btn btn-success btn-sm" onclick="openComplete(${t.id},'${t.title.replace(/'/g,"\\'")}')">✓ Done</button>
+                  </div>`;
+                }).join('')
+            }
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-hdr">
+            <h3>✅ Completed Tasks</h3>
+            <span class="badge badge-green">${completed.length} done</span>
+          </div>
+          <div class="card-body">
+            <div style="margin-bottom:14px">
+              <div style="display:flex;justify-content:space-between;font-size:12px;font-weight:700;color:var(--text2);margin-bottom:5px">
+                <span>Completion Rate</span><span style="color:var(--accent)">${rate}%</span>
+              </div>
+              <div class="progress-wrap"><div class="progress-fill" style="width:${rate}%"></div></div>
+            </div>
+            ${completed.length === 0
+              ? `<div class="empty"><div class="empty-icon">📋</div><p>No completed tasks yet. Start completing!</p></div>`
+              : completed.slice(0,5).map((t,i)=>{
+                  const doneAt = t.completedAt ? new Date(t.completedAt).toLocaleDateString('en-GB',{day:'2-digit',month:'short'}) : '';
+                  return `<div class="task-item task-done" style="animation:fadeUp 0.3s ${i*0.05}s ease both">
+                    <div style="width:20px;height:20px;border-radius:5px;background:#dcfce7;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:10px;margin-top:2px">✓</div>
+                    <div class="task-info"><div class="task-title">${t.title}</div>${doneAt?`<div class="task-sub">Done ${doneAt}</div>`:''}</div>
+                  </div>`;
+                }).join('')
+            }
+            ${completed.length > 5 ? `<div style="text-align:center;padding:8px 0;font-size:12px;color:var(--text3);font-weight:600">+${completed.length-5} more completed</div>` : ''}
+          </div>
+        </div>
+      </div>
+
+      <!-- RANKING + PROFILE -->
+      <div class="grid-2" id="rank-section" style="margin-bottom:16px">
+        <div class="card" style="margin-bottom:0">
+          <div class="card-hdr">
+            <h3>🏆 Team Leaderboard</h3>
+            <span class="badge badge-indigo">You are #${myRank}</span>
+          </div>
+          <div class="card-body" style="padding-top:4px">
+            ${lb.length === 0
+              ? `<div class="empty"><div class="empty-icon">👥</div><p>No team members yet</p></div>`
+              : lb.map((s,i) => {
+                  const isMe = s.id === srId;
+                  const rankCls = isMe ? 'rank-me' : i===0?'rank-gold':i===1?'rank-silver':i===2?'rank-bronze':'rank-other';
+                  const medal = i===0?'🥇':i===1?'🥈':i===2?'🥉':i+1;
+                  const pct = Math.round((s.tasksCompleted/maxScore)*100);
+                  return `<div class="rank-row" style="${isMe?'background:#f5f3ff;border-radius:10px;padding:10px;margin:0 -10px':''}">
+                    <div class="rank-num ${rankCls}">${isMe?'★':medal}</div>
+                    <div style="flex:1">
+                      <div style="display:flex;align-items:center;gap:5px">
+                        <span style="font-weight:700;font-size:13.5px">${s.name}</span>
+                        ${isMe?'<span class="rank-you-tag">YOU</span>':''}
+                      </div>
+                      <div style="display:flex;align-items:center;gap:8px;margin-top:4px">
+                        <div class="rank-bar-wrap"><div class="rank-bar" style="width:${pct}%"></div></div>
+                        <span style="font-size:11px;color:var(--text3);font-weight:600">${s.tasksPending} pending</span>
+                      </div>
+                    </div>
+                    <span style="font-size:14px;font-weight:800;color:var(--accent)">${s.tasksCompleted}</span>
+                  </div>`;
+                }).join('')
+            }
+          </div>
+        </div>
+
+        <div class="card" style="margin-bottom:0">
+          <div class="card-hdr">
+            <h3>👤 My Profile</h3>
+            <div style="display:flex;gap:6px">
+              <button class="btn btn-ghost btn-sm" onclick="openProfileModal()">✏️ Edit</button>
+              <button class="btn btn-warning btn-sm" onclick="openPasswordModal()">🔑 Password</button>
+            </div>
+          </div>
+          <div class="card-body">
+            <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px">
+              <div class="profile-avatar-big">${sr.name.charAt(0).toUpperCase()}</div>
+              <div>
+                <div style="font-size:18px;font-weight:800">${sr.name}</div>
+                <div style="font-size:12.5px;color:var(--text3);margin-top:2px">${sr.expertise||'Sales Representative'}</div>
+                <span class="badge ${sr.isAvailable?'badge-green':'badge-red'}" style="margin-top:6px">${sr.isAvailable?'🟢 Available':'🔴 Busy'}</span>
+              </div>
+            </div>
+            <div class="info-row"><span>📧</span><span style="font-weight:600">${sr.email}</span></div>
+            ${sr.phone ? `<div class="info-row"><span>📞</span><span style="font-weight:600">${sr.phone}</span></div>` : ''}
+            ${sr.city ? `<div class="info-row"><span>📍</span><span style="font-weight:600">${sr.city}</span></div>` : ''}
+          </div>
+        </div>
+      </div>
+
+      <!-- CUSTOMERS -->
+      <div class="card" id="customers-section" style="margin-bottom:0">
+        <div class="card-hdr">
+          <h3>🧑 My Customers</h3>
+          <span style="font-size:12px;color:var(--text3)">${customers.length} assigned to you</span>
+        </div>
+        <div style="overflow-x:auto">
+          <table class="tbl">
+            <thead><tr><th>Name</th><th>Company</th><th>Email</th><th>Phone</th><th>Tasks</th><th>Status</th></tr></thead>
+            <tbody>
+              ${!customers.length
+                ? `<tr><td colspan="6" style="text-align:center;padding:28px;color:var(--text3)">No customers assigned to you yet.<br><span style="font-size:12px">Ask admin to assign customers.</span></td></tr>`
+                : customers.map(c=>{
+                    const custTasks = tasks.filter(t => t.customerId === c.id);
+                    const taskBadge = custTasks.length > 0
+                      ? `<span style="display:inline-flex;align-items:center;gap:3px;background:#e0e7ff;border-radius:5px;padding:2px 7px;font-size:11px;font-weight:700;color:#4338ca">📋 ${custTasks.length}</span>`
+                      : `<span style="font-size:12px;color:var(--text3)">—</span>`;
+                    return `<tr>
+                      <td style="font-weight:700">${c.name}</td>
+                      <td style="color:var(--text2)">${c.company||'—'}</td>
+                      <td style="color:var(--text2)">${c.email||'—'}</td>
+                      <td style="color:var(--text2)">${c.phone||'—'}</td>
+                      <td>${taskBadge}</td>
+                      <td><span class="badge ${c.status==='Active'?'badge-green':'badge-amber'}">${c.status||'Active'}</span></td>
+                    </tr>`;
+                  }).join('')
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    `;
+
+    // Pre-fill profile modal
+    document.getElementById('pName').value = sr.name;
+    document.getElementById('pEmail').value = sr.email;
+    document.getElementById('pPhone').value = sr.phone || '';
+    document.getElementById('pCity').value = sr.city || '';
+    document.getElementById('pExpertise').value = sr.expertise || '';
+    document.getElementById('pAvailable').value = sr.isAvailable ? 'true' : 'false';
+
+  } catch(e) {
+    console.error(e);
+    document.getElementById('mainPage').innerHTML = `
+      <div style="text-align:center;padding:80px;color:var(--danger)">
+        <div style="font-size:40px;margin-bottom:12px">❌</div>
+        <div style="font-size:16px;font-weight:700">Failed to load dashboard</div>
+        <div style="font-size:13px;color:var(--text3);margin-top:6px">${e.message}</div>
+      </div>`;
+  }
+}
+
+// Complete task
+function openComplete(id, title) {
+  pendingCompleteId = id;
+  document.getElementById('completeTaskTitle').textContent = title;
+  document.getElementById('completeModal').classList.add('open');
+}
+async function confirmComplete() {
+  if (!pendingCompleteId) return;
+  try {
+    await Api.put('/task/' + pendingCompleteId + '/complete', {});
+    document.getElementById('completeModal').classList.remove('open');
+    loadDashboard();
+  } catch(e) { alert('Failed: ' + e.message); }
+}
+
+// Edit profile
+function openProfileModal() { document.getElementById('profileModal').classList.add('open'); }
+
+async function submitProfile() {
+  const errEl = document.getElementById('profileErr');
+  const okEl = document.getElementById('profileOk');
+  errEl.style.display = 'none'; okEl.style.display = 'none';
+  const name = document.getElementById('pName').value.trim();
+  const email = document.getElementById('pEmail').value.trim();
+  if (!name || !email) { errEl.textContent = '⚠️ Name and email are required.'; errEl.style.display = 'block'; return; }
+  try {
+    await Api.put('/salesrep/' + srId, {
+      name, email,
+      phone: document.getElementById('pPhone').value.trim(),
+      city: document.getElementById('pCity').value.trim(),
+      expertise: document.getElementById('pExpertise').value.trim(),
+      isAvailable: document.getElementById('pAvailable').value === 'true'
+    });
+    localStorage.setItem('userName', name);
+    document.getElementById('topName').textContent = name;
+    okEl.textContent = '✅ Profile updated successfully!';
+    okEl.style.display = 'block';
+    setTimeout(() => { document.getElementById('profileModal').classList.remove('open'); loadDashboard(); }, 1000);
+  } catch(e) { errEl.textContent = '⚠️ ' + e.message; errEl.style.display = 'block'; }
+}
+
+// Change password
+function openPasswordModal() { document.getElementById('passwordModal').classList.add('open'); }
+
+async function submitPassword() {
+  const newPw = document.getElementById('pwNew').value;
+  const confirmPw = document.getElementById('pwConfirm').value;
+  const errEl = document.getElementById('pwErr');
+  const okEl = document.getElementById('pwOk');
+  errEl.style.display = 'none'; okEl.style.display = 'none';
+  if (!newPw) { errEl.textContent = '⚠️ Please enter a new password.'; errEl.style.display = 'block'; return; }
+  if (newPw.length < 6) { errEl.textContent = '⚠️ Password must be at least 6 characters.'; errEl.style.display = 'block'; return; }
+  if (newPw !== confirmPw) { errEl.textContent = '⚠️ Passwords do not match.'; errEl.style.display = 'block'; return; }
+  try {
+    await Api.put('/salesrep/' + srId + '/password', { newPassword: newPw });
+    okEl.textContent = '✅ Password changed successfully!';
+    okEl.style.display = 'block';
+    document.getElementById('pwNew').value = '';
+    document.getElementById('pwConfirm').value = '';
+    setTimeout(() => document.getElementById('passwordModal').classList.remove('open'), 1200);
+  } catch(e) { errEl.textContent = '⚠️ ' + e.message; errEl.style.display = 'block'; }
+}
+
+loadDashboard();
+</script>
+</body>
+</html>

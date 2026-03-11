@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>All Tasks – CRM Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f0f2f5;--surface:#fff;--surface2:#f8fafc;--border:#e2e8f0;--border2:#f1f5f9;--text:#0f172a;--text2:#475569;--text3:#94a3b8;--accent:#6366f1;--success:#10b981;--warning:#f59e0b;--danger:#ef4444;--sidebar-w:240px;--nav-h:64px;--radius:14px;--font:'Plus Jakarta Sans',sans-serif}
+*{box-sizing:border-box;margin:0;padding:0;font-family:var(--font)}
+body{background:var(--bg);color:var(--text);min-height:100vh}
+.topbar{position:fixed;top:0;left:0;right:0;height:var(--nav-h);background:#0f172a;border-bottom:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;padding:0 24px 0 0;z-index:200}
+.topbar-brand{width:var(--sidebar-w);display:flex;align-items:center;gap:10px;padding:0 24px;flex-shrink:0;font-size:18px;font-weight:800;color:white}
+.logo-icon{width:34px;height:34px;background:linear-gradient(135deg,#6366f1,#8b5cf6);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:12px}
+.topbar-user{color:rgba(255,255,255,0.6);font-size:13px;font-weight:500}
+.topbar-user strong{color:white;font-weight:700}
+.topbar-btn{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);color:rgba(255,255,255,0.8);padding:7px 16px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font);transition:all 0.2s}
+.topbar-btn:hover{background:rgba(255,255,255,0.15);color:white}
+.sidebar{position:fixed;top:var(--nav-h);left:0;bottom:0;width:var(--sidebar-w);background:#0f172a;border-right:1px solid rgba(255,255,255,0.05);padding:20px 12px;overflow-y:auto;z-index:100;display:flex;flex-direction:column;gap:2px}
+.sidebar-section{font-size:10px;font-weight:700;letter-spacing:1.5px;color:rgba(255,255,255,0.25);text-transform:uppercase;padding:12px 12px 6px;margin-top:8px}
+.sidebar a{display:flex;align-items:center;gap:10px;padding:10px 12px;color:rgba(255,255,255,0.5);text-decoration:none;font-weight:500;font-size:13.5px;border-radius:9px;transition:all 0.15s}
+.sidebar a:hover{background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.85)}
+.sidebar a.active{background:linear-gradient(135deg,rgba(99,102,241,0.25),rgba(139,92,246,0.15));color:#a5b4fc;border:1px solid rgba(99,102,241,0.25)}
+.s-icon{font-size:16px;flex-shrink:0}
+.main{margin-left:var(--sidebar-w);padding-top:var(--nav-h);min-height:100vh}
+.page{padding:28px 32px}
+
+/* STATS */
+.stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;box-shadow:0 1px 3px rgba(0,0,0,0.06);position:relative;overflow:hidden;animation:fadeUp 0.35s ease both}
+.stat-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px}
+.stat-card.c1::after{background:linear-gradient(90deg,#6366f1,#8b5cf6)}
+.stat-card.c2::after{background:linear-gradient(90deg,#10b981,#34d399)}
+.stat-card.c3::after{background:linear-gradient(90deg,#f59e0b,#fbbf24)}
+.stat-card.c4::after{background:linear-gradient(90deg,#f43f5e,#fb7185)}
+.sc-val{font-size:32px;font-weight:900;line-height:1;margin-bottom:3px}
+.sc-lbl{font-size:12px;color:var(--text3);font-weight:600}
+
+/* FILTER BAR */
+.filter-bar{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 20px;margin-bottom:20px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;box-shadow:0 1px 3px rgba(0,0,0,0.06)}
+.filter-chip{padding:6px 14px;border-radius:100px;border:1.5px solid var(--border);background:var(--surface2);font-size:12.5px;font-weight:600;color:var(--text2);cursor:pointer;transition:all 0.15s}
+.filter-chip.active,.filter-chip:hover{background:var(--accent);color:white;border-color:var(--accent)}
+.filter-search{padding:8px 14px;border:1.5px solid var(--border);border-radius:9px;font-family:var(--font);font-size:13px;outline:none;background:var(--surface2);color:var(--text);min-width:220px;transition:all 0.2s}
+.filter-search:focus{border-color:var(--accent);background:white;box-shadow:0 0 0 3px rgba(99,102,241,0.1)}
+.filter-select{padding:8px 14px;border:1.5px solid var(--border);border-radius:9px;font-family:var(--font);font-size:13px;outline:none;background:var(--surface2);cursor:pointer;color:var(--text)}
+
+/* TABLE */
+.tbl-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:0 1px 3px rgba(0,0,0,0.06);overflow:hidden}
+.tbl{width:100%;border-collapse:collapse}
+.tbl th{font-size:11px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:var(--text3);padding:13px 18px;border-bottom:1px solid var(--border);text-align:left;background:var(--surface2)}
+.tbl td{padding:14px 18px;border-bottom:1px solid var(--border2);font-size:13.5px;vertical-align:middle}
+.tbl tbody tr:last-child td{border-bottom:none}
+.tbl tbody tr:hover td{background:#f8f9ff}
+.tbl-empty{text-align:center;padding:60px;color:var(--text3)}
+.tbl-empty-icon{font-size:40px;margin-bottom:10px;opacity:0.6}
+
+/* BADGE */
+.badge{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:100px;font-size:11.5px;font-weight:700}
+.badge-green{background:#dcfce7;color:#15803d}
+.badge-amber{background:#fef9c3;color:#a16207}
+.badge-red{background:#fee2e2;color:#b91c1c}
+.badge-indigo{background:#e0e7ff;color:#4338ca}
+
+/* SR AVATAR */
+.sr-dot{width:28px;height:28px;border-radius:7px;background:linear-gradient(135deg,#6366f1,#8b5cf6);display:flex;align-items:center;justify-content:center;color:white;font-size:11px;font-weight:800;flex-shrink:0}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:8px;font-size:12.5px;font-weight:600;cursor:pointer;border:none;font-family:var(--font);transition:all 0.18s;text-decoration:none;white-space:nowrap}
+.btn-sm{padding:5px 11px;font-size:11.5px;border-radius:7px}
+.btn-primary{background:linear-gradient(135deg,#6366f1,#8b5cf6);color:white}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(99,102,241,0.38);color:white}
+.btn-success{background:#dcfce7;color:#15803d;border:1px solid #bbf7d0}
+.btn-success:hover{background:#15803d;color:white}
+.btn-danger{background:#fee2e2;color:#b91c1c;border:1px solid #fecaca}
+.btn-danger:hover{background:#b91c1c;color:white}
+.btn-ghost{background:var(--surface2);color:var(--text2);border:1.5px solid var(--border)}
+.btn-ghost:hover{background:var(--border);color:var(--text)}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(15,23,42,0.5);backdrop-filter:blur(4px);z-index:500;display:flex;align-items:center;justify-content:center;padding:24px;opacity:0;pointer-events:none;transition:opacity 0.2s}
+.modal-overlay.open{opacity:1;pointer-events:all}
+.modal-box{background:var(--surface);border-radius:20px;width:100%;max-width:500px;box-shadow:0 25px 60px rgba(0,0,0,0.15);transform:scale(0.96);transition:transform 0.2s}
+.modal-overlay.open .modal-box{transform:scale(1)}
+.modal-hdr{padding:20px 24px;border-bottom:1px solid var(--border2);display:flex;justify-content:space-between;align-items:center}
+.modal-hdr h3{font-size:17px;font-weight:800}
+.modal-close{width:30px;height:30px;border-radius:8px;background:var(--surface2);border:1px solid var(--border);cursor:pointer;font-size:15px}
+.modal-body{padding:22px 24px}
+.modal-footer{padding:14px 24px;border-top:1px solid var(--border2);display:flex;justify-content:flex-end;gap:10px}
+.form-group{margin-bottom:14px}
+.form-label{display:block;font-size:12px;font-weight:700;color:var(--text2);margin-bottom:6px}
+.form-control{width:100%;padding:10px 13px;border:2px solid var(--border);border-radius:9px;font-family:var(--font);font-size:13.5px;color:var(--text);background:var(--surface2);outline:none;transition:all 0.18s}
+.form-control:focus{border-color:var(--accent);background:white;box-shadow:0 0 0 3px rgba(99,102,241,0.1)}
+.alert{padding:10px 14px;border-radius:9px;font-size:13px;font-weight:600;margin-bottom:12px;display:none}
+.alert-danger{background:#fef2f2;border:1px solid #fecaca;color:#b91c1c}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-brand"><div class="logo-icon">⚡</div>CRM Pro</div>
+  <div class="topbar-right">
+    <span class="topbar-user">Hello, <strong id="userName">Admin</strong></span>
+    <button class="topbar-btn" onclick="logout()">Sign Out</button>
+  </div>
+</div>
+
+<div class="sidebar">
+  <div class="sidebar-section">Main</div>
+  <a href="admin-dashboard.html"><span class="s-icon">📊</span>Dashboard</a>
+  <a href="kanban.html"><span class="s-icon">📋</span>Kanban Board</a>
+  <div class="sidebar-section">Management</div>
+  <a href="sales-reps.html"><span class="s-icon">👥</span>Sales Reps</a>
+  <a href="customers.html"><span class="s-icon">🧑</span>Customers</a>
+  <a href="tasks.html" class="active"><span class="s-icon">✅</span>All Tasks</a>
+  <div class="sidebar-section">Admin</div>
+  <a href="service-requests.html"><span class="s-icon">📬</span>Service Requests</a>
+  <a href="reports.html"><span class="s-icon">📈</span>Reports</a>
+  <div class="sidebar-section">Site</div>
+  <a href="index.html" target="_blank"><span class="s-icon">🌐</span>Landing Page</a>
+</div>
+
+<div class="main"><div class="page">
+
+  <!-- Header -->
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px;flex-wrap:wrap;gap:12px">
+    <div>
+      <h1 style="font-size:26px;font-weight:800;letter-spacing:-0.5px">✅ All Tasks</h1>
+      <p style="font-size:13.5px;color:var(--text3);margin-top:3px" id="taskSubtitle">Loading...</p>
+    </div>
+    <div style="display:flex;gap:10px">
+      <button class="btn btn-ghost" onclick="loadTasks()">↻ Refresh</button>
+      <button class="btn btn-primary" onclick="openAssignModal()">+ Assign Task</button>
+    </div>
+  </div>
+
+  <!-- STAT CARDS -->
+  <div class="stat-row">
+    <div class="stat-card c1"><div class="sc-val" id="s-total" style="color:#6366f1">–</div><div class="sc-lbl">Total Tasks</div></div>
+    <div class="stat-card c2"><div class="sc-val" id="s-done" style="color:#10b981">–</div><div class="sc-lbl">Completed</div></div>
+    <div class="stat-card c3"><div class="sc-val" id="s-pending" style="color:#f59e0b">–</div><div class="sc-lbl">Pending</div></div>
+    <div class="stat-card c4"><div class="sc-val" id="s-overdue" style="color:#f43f5e">–</div><div class="sc-lbl">Overdue</div></div>
+  </div>
+
+  <!-- FILTERS -->
+  <div class="filter-bar">
+    <span style="font-size:12px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px">Filter:</span>
+    <button class="filter-chip active" onclick="setStatusFilter('all',this)">All</button>
+    <button class="filter-chip" onclick="setStatusFilter('Pending',this)">⏳ Pending</button>
+    <button class="filter-chip" onclick="setStatusFilter('Completed',this)">✅ Completed</button>
+    <button class="filter-chip" onclick="setStatusFilter('Overdue',this)">⚠️ Overdue</button>
+    <div style="margin-left:auto;display:flex;gap:10px;flex-wrap:wrap">
+      <select id="srFilter" class="filter-select" onchange="renderTable()">
+        <option value="">All Sales Reps</option>
+      </select>
+      <input id="searchInput" class="filter-search" placeholder="🔍 Search tasks..." oninput="renderTable()">
+    </div>
+  </div>
+
+  <!-- TABLE -->
+  <div class="tbl-wrap">
+    <table class="tbl">
+      <thead>
+        <tr>
+          <th>Task</th>
+          <th>Sales Rep</th>
+          <th>Linked Customer</th>
+          <th>Due Date</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="taskTableBody">
+        <tr><td colspan="6" class="tbl-empty">
+          <div class="tbl-empty-icon">⏳</div>
+          <div style="font-weight:600">Loading tasks...</div>
+        </td></tr>
+      </tbody>
+    </table>
+  </div>
+
+</div></div>
+
+<!-- ASSIGN TASK MODAL -->
+<div class="modal-overlay" id="assignModal">
+  <div class="modal-box">
+    <div class="modal-hdr"><h3>➕ Assign New Task</h3><button class="modal-close" onclick="closeAssignModal()">✕</button></div>
+    <div class="modal-body">
+      <div class="alert alert-danger" id="assignErr"></div>
+      <div class="form-group">
+        <label class="form-label">Assign To (Sales Rep) *</label>
+        <select id="assignSR" class="form-control" onchange="onSRChange()"><option value="">— Select a Sales Rep —</option></select>
+      </div>
+      <div class="form-group" id="custGroup" style="display:none">
+        <label class="form-label">Link to Customer (optional)</label>
+        <select id="assignCustomer" class="form-control" onchange="onCustomerChange()">
+          <option value="">— No specific customer —</option>
+        </select>
+        <div style="background:#f5f3ff;border:1px solid #ddd6fe;border-radius:8px;padding:9px 12px;font-size:12px;color:#6d28d9;font-weight:600;margin-top:8px">
+          💡 Selecting a customer links this task in the database and auto-fills the title
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Task Title *</label>
+        <input id="assignTitle" class="form-control" placeholder="e.g. Follow up with Enterprise client">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Description</label>
+        <textarea id="assignDesc" class="form-control" rows="3" placeholder="Add more details..."></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Due Date</label>
+        <input id="assignDue" type="date" class="form-control">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeAssignModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="submitAssign()">Assign Task</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const API_BASE = 'http://localhost:5271/api';
+function getToken() { return localStorage.getItem('token'); }
+function logout() { localStorage.clear(); window.location.href = 'login.html'; }
+if (!getToken()) window.location.href = 'login.html';
+if (localStorage.getItem('role') !== 'Admin') window.location.href = 'sr-dashboard.html?id=' + localStorage.getItem('userId');
+document.getElementById('userName').textContent = localStorage.getItem('userName') || 'Admin';
+
+const Api = {
+  get: async (url) => {
+    const r = await fetch(API_BASE + url, { headers: { 'Authorization': 'Bearer ' + getToken() } });
+    if (r.status === 401) { logout(); return null; }
+    return r.json();
+  },
+  post: async (url, body) => {
+    const r = await fetch(API_BASE + url, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + getToken() }, body: JSON.stringify(body) });
+    if (!r.ok) throw new Error(await r.text());
+    return r.json();
+  },
+  put: async (url, body) => {
+    const r = await fetch(API_BASE + url, { method: 'PUT', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + getToken() }, body: JSON.stringify(body) });
+    if (!r.ok) throw new Error(await r.text());
+    return r.json();
+  },
+  delete: async (url) => {
+    const r = await fetch(API_BASE + url, { method: 'DELETE', headers: { 'Authorization': 'Bearer ' + getToken() } });
+    if (!r.ok) throw new Error(await r.text());
+    return r.json();
+  }
+};
+
+let allTasks = [];
+let allSRs = [];
+let allCustomers = [];
+let statusFilter = 'all';
+
+async function loadTasks() {
+  [allSRs, allCustomers] = await Promise.all([
+    Api.get('/salesrep') || [],
+    Api.get('/customer') || []
+  ]);
+  allSRs = allSRs || []; allCustomers = allCustomers || [];
+  allTasks = [];
+  const now = new Date();
+
+  for (const sr of allSRs) {
+    const tasks = await Api.get('/task/salesrep/' + sr.id) || [];
+    tasks.forEach(t => {
+      t._srName   = sr.name;
+      t._srId     = sr.id;
+      t._overdue  = t.status === 'Pending' && t.dueDate && new Date(t.dueDate) < now;
+      // Resolve customer from DB customerId — no text parsing
+      t._customer = t.customerId ? allCustomers.find(c => c.id === t.customerId) || null : null;
+      allTasks.push(t);
+    });
+  }
+
+  const total   = allTasks.length;
+  const done    = allTasks.filter(t => t.status === 'Completed').length;
+  const pending = allTasks.filter(t => t.status === 'Pending').length;
+  const overdue = allTasks.filter(t => t._overdue).length;
+  document.getElementById('s-total').textContent   = total;
+  document.getElementById('s-done').textContent    = done;
+  document.getElementById('s-pending').textContent = pending;
+  document.getElementById('s-overdue').textContent = overdue;
+  document.getElementById('taskSubtitle').textContent = `${total} task${total !== 1 ? 's' : ''} across ${allSRs.length} sales rep${allSRs.length !== 1 ? 's' : ''}`;
+
+  document.getElementById('srFilter').innerHTML =
+    '<option value="">All Sales Reps</option>' +
+    allSRs.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
+
+  document.getElementById('assignSR').innerHTML =
+    '<option value="">— Select a Sales Rep —</option>' +
+    allSRs.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
+
+  renderTable();
+}
+
+function setStatusFilter(val, btn) {
+  statusFilter = val;
+  document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+  renderTable();
+}
+
+function renderTable() {
+  const search      = document.getElementById('searchInput').value.toLowerCase();
+  const srFilterVal = document.getElementById('srFilter').value;
+
+  let tasks = allTasks.filter(t => {
+    if (statusFilter === 'Pending'   && t.status !== 'Pending')   return false;
+    if (statusFilter === 'Completed' && t.status !== 'Completed') return false;
+    if (statusFilter === 'Overdue'   && !t._overdue)              return false;
+    if (srFilterVal && t._srId != srFilterVal)                    return false;
+    if (search &&
+        !t.title.toLowerCase().includes(search) &&
+        !t._srName.toLowerCase().includes(search) &&
+        !(t._customer?.name || '').toLowerCase().includes(search)) return false;
+    return true;
+  });
+
+  const tbody = document.getElementById('taskTableBody');
+  if (!tasks.length) {
+    tbody.innerHTML = `<tr><td colspan="6" class="tbl-empty">
+      <div class="tbl-empty-icon">🔍</div>
+      <div style="font-weight:600">No tasks match your filters</div>
+    </td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = tasks.map((t, i) => {
+    const due    = t.dueDate ? new Date(t.dueDate) : null;
+    const dueStr = due ? due.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : '—';
+    const isDone = t.status === 'Completed';
+
+    const custCell = t._customer
+      ? `<div style="display:inline-flex;align-items:center;gap:5px;background:#f5f3ff;border:1px solid #ddd6fe;border-radius:6px;padding:3px 9px;font-size:11.5px;font-weight:700;color:#6d28d9">
+           🧑 ${t._customer.name}
+           <span style="opacity:0.6">#${String(t._customer.id).padStart(4,'0')}</span>
+         </div>`
+      : `<span style="font-size:12px;color:var(--text3)">—</span>`;
+
+    return `<tr style="animation:fadeUp 0.25s ${i * 0.03}s ease both">
+      <td>
+        <div style="font-weight:700;font-size:13.5px;max-width:260px">${t.title}</div>
+        ${t.description ? `<div style="font-size:11.5px;color:var(--text3);margin-top:2px;max-width:260px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${t.description}</div>` : ''}
+      </td>
+      <td>
+        <div style="display:flex;align-items:center;gap:8px">
+          <div class="sr-dot">${t._srName.charAt(0).toUpperCase()}</div>
+          <a href="sr-profile.html?id=${t._srId}" style="font-weight:600;color:var(--accent);text-decoration:none;font-size:13px">${t._srName}</a>
+        </div>
+      </td>
+      <td>${custCell}</td>
+      <td>
+        <span style="font-size:13px;font-weight:600;color:${t._overdue ? 'var(--danger)' : 'var(--text2)'}">
+          ${dueStr}${t._overdue ? ' ⚠️' : ''}
+        </span>
+        ${isDone && t.completedAt ? `<div style="font-size:11px;color:var(--success);margin-top:2px">✓ Done ${new Date(t.completedAt).toLocaleDateString('en-GB',{day:'2-digit',month:'short'})}</div>` : ''}
+      </td>
+      <td>
+        <span class="badge ${isDone ? 'badge-green' : t._overdue ? 'badge-red' : 'badge-amber'}">
+          ${isDone ? '✅ Completed' : t._overdue ? '⚠️ Overdue' : '⏳ Pending'}
+        </span>
+      </td>
+      <td>
+        <div style="display:flex;gap:6px">
+          ${!isDone ? `<button class="btn btn-success btn-sm" onclick="completeTask(${t.id})">✓</button>` : ''}
+          <button class="btn btn-danger btn-sm" onclick="deleteTask(${t.id},'${t.title.replace(/'/g,"\\'")}')">🗑</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+async function completeTask(id) {
+  if (!confirm('Mark this task as completed?')) return;
+  try { await Api.put('/task/' + id + '/complete', {}); await loadTasks(); }
+  catch (e) { alert('Failed: ' + e.message); }
+}
+
+async function deleteTask(id, title) {
+  if (!confirm(`Delete "${title}"? This cannot be undone.`)) return;
+  try { await Api.delete('/task/' + id); await loadTasks(); }
+  catch (e) { alert('Failed: ' + e.message); }
+}
+
+function openAssignModal()  { document.getElementById('assignModal').classList.add('open'); }
+function closeAssignModal() { document.getElementById('assignModal').classList.remove('open'); document.getElementById('assignErr').style.display='none'; }
+
+function onSRChange() {
+  const srId = document.getElementById('assignSR').value;
+  const grp  = document.getElementById('custGroup');
+  if (!srId) { grp.style.display = 'none'; return; }
+  const srCustomers = allCustomers.filter(c => c.salesRepId == srId);
+  document.getElementById('assignCustomer').innerHTML =
+    '<option value="">— No specific customer —</option>' +
+    srCustomers.map(c => `<option value="${c.id}">${c.name}${c.company ? ' (' + c.company + ')' : ''} — #${String(c.id).padStart(4,'0')}</option>`).join('');
+  grp.style.display = 'block';
+}
+
+function onCustomerChange() {
+  const custId = document.getElementById('assignCustomer').value;
+  if (!custId) return;
+  const cust   = allCustomers.find(c => c.id == custId);
+  const srName = allSRs.find(s => s.id == document.getElementById('assignSR').value)?.name || '';
+  if (cust) {
+    document.getElementById('assignTitle').value = `Follow up with ${cust.name}`;
+    document.getElementById('assignDesc').value  = `Customer #${String(cust.id).padStart(4,'0')}${cust.company ? ' — ' + cust.company : ''}`;
+  }
+}
+
+async function submitAssign() {
+  const srId   = document.getElementById('assignSR').value;
+  const title  = document.getElementById('assignTitle').value.trim();
+  const custId = document.getElementById('assignCustomer').value;
+  const errEl  = document.getElementById('assignErr');
+  errEl.style.display = 'none';
+  if (!srId || !title) { errEl.textContent = '⚠️ Sales rep and task title are required.'; errEl.style.display = 'block'; return; }
+  try {
+    await Api.post('/task', {
+      title,
+      description: document.getElementById('assignDesc').value.trim(),
+      dueDate:     document.getElementById('assignDue').value
+                   ? new Date(document.getElementById('assignDue').value).toISOString()
+                   : new Date().toISOString(),
+      salesRepId:  parseInt(srId),
+      customerId:  custId ? parseInt(custId) : null,   // ← stored in DB
+      status:      'Pending'
+    });
+    closeAssignModal();
+    document.getElementById('assignTitle').value  = '';
+    document.getElementById('assignDesc').value   = '';
+    document.getElementById('assignDue').value    = '';
+    document.getElementById('assignSR').value     = '';
+    document.getElementById('assignCustomer').value = '';
+    document.getElementById('custGroup').style.display = 'none';
+    await loadTasks();
+  } catch (e) { errEl.textContent = '⚠️ ' + e.message; errEl.style.display = 'block'; }
+}
+
+loadTasks();
+
+</script>
+</body>
+</html>

@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Customers – CRM Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f0f2f5;--surface:#fff;--surface2:#f8fafc;--border:#e2e8f0;--border2:#f1f5f9;--text:#0f172a;--text2:#475569;--text3:#94a3b8;--accent:#6366f1;--success:#10b981;--warning:#f59e0b;--danger:#ef4444;--sidebar-w:240px;--nav-h:64px;--radius:14px;--font:'Plus Jakarta Sans',sans-serif}
+*{box-sizing:border-box;margin:0;padding:0;font-family:var(--font)}
+body{background:var(--bg);color:var(--text);min-height:100vh}
+.topbar{position:fixed;top:0;left:0;right:0;height:var(--nav-h);background:#0f172a;border-bottom:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;padding:0 24px 0 0;z-index:200}
+.topbar-brand{width:var(--sidebar-w);display:flex;align-items:center;gap:10px;padding:0 24px;flex-shrink:0;font-size:18px;font-weight:800;color:white}
+.logo-icon{width:34px;height:34px;background:linear-gradient(135deg,#6366f1,#8b5cf6);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:12px}
+.topbar-user{color:rgba(255,255,255,0.6);font-size:13px;font-weight:500}
+.topbar-user strong{color:white;font-weight:700}
+.topbar-btn{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);color:rgba(255,255,255,0.8);padding:7px 16px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font);transition:all 0.2s}
+.topbar-btn:hover{background:rgba(255,255,255,0.15);color:white}
+.sidebar{position:fixed;top:var(--nav-h);left:0;bottom:0;width:var(--sidebar-w);background:#0f172a;border-right:1px solid rgba(255,255,255,0.05);padding:20px 12px;overflow-y:auto;z-index:100;display:flex;flex-direction:column;gap:2px}
+.sidebar-section{font-size:10px;font-weight:700;letter-spacing:1.5px;color:rgba(255,255,255,0.25);text-transform:uppercase;padding:12px 12px 6px;margin-top:8px}
+.sidebar a{display:flex;align-items:center;gap:10px;padding:10px 12px;color:rgba(255,255,255,0.5);text-decoration:none;font-weight:500;font-size:13.5px;border-radius:9px;transition:all 0.15s}
+.sidebar a:hover{background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.85)}
+.sidebar a.active{background:linear-gradient(135deg,rgba(99,102,241,0.25),rgba(139,92,246,0.15));color:#a5b4fc;border:1px solid rgba(99,102,241,0.25)}
+.s-icon{font-size:16px;flex-shrink:0}
+.main{margin-left:var(--sidebar-w);padding-top:var(--nav-h);min-height:100vh}
+.page{padding:28px 32px}
+
+.stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:22px}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;box-shadow:0 1px 3px rgba(0,0,0,0.06);position:relative;overflow:hidden;animation:fadeUp 0.35s ease both;display:flex;align-items:center;gap:16px}
+.stat-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px}
+.stat-card.c1::after{background:linear-gradient(90deg,#6366f1,#8b5cf6)}
+.stat-card.c2::after{background:linear-gradient(90deg,#10b981,#34d399)}
+.stat-card.c3::after{background:linear-gradient(90deg,#f59e0b,#fbbf24)}
+.sc-icon{width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.sc-val{font-size:30px;font-weight:900;line-height:1;margin-bottom:2px}
+.sc-lbl{font-size:12px;color:var(--text3);font-weight:600}
+
+.filter-bar{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 20px;margin-bottom:20px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;box-shadow:0 1px 3px rgba(0,0,0,0.06)}
+.filter-search{padding:9px 14px;border:1.5px solid var(--border);border-radius:9px;font-family:var(--font);font-size:13px;outline:none;background:var(--surface2);color:var(--text);min-width:220px;transition:all 0.2s}
+.filter-search:focus{border-color:var(--accent);background:white;box-shadow:0 0 0 3px rgba(99,102,241,0.1)}
+.filter-select{padding:9px 14px;border:1.5px solid var(--border);border-radius:9px;font-family:var(--font);font-size:13px;outline:none;background:var(--surface2);cursor:pointer;color:var(--text)}
+
+.tbl-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:0 1px 3px rgba(0,0,0,0.06);overflow:hidden}
+.tbl{width:100%;border-collapse:collapse}
+.tbl th{font-size:11px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:var(--text3);padding:13px 18px;border-bottom:1px solid var(--border);text-align:left;background:var(--surface2)}
+.tbl td{padding:13px 18px;border-bottom:1px solid var(--border2);font-size:13.5px;vertical-align:middle}
+.tbl tbody tr:last-child td{border-bottom:none}
+.tbl tbody tr:hover td{background:#f8f9ff}
+.tbl-footer{padding:14px 20px;border-top:1px solid var(--border2);background:var(--surface2);font-size:12.5px;color:var(--text3);font-weight:600}
+
+.cid-pill{display:inline-flex;align-items:center;gap:5px;background:#f1f5f9;border:1.5px solid #cbd5e1;border-radius:7px;padding:4px 10px;font-size:12px;font-weight:800;color:#334155;letter-spacing:0.5px}
+.cid-pill span{font-size:9px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:1px}
+.cust-avatar{width:36px;height:36px;border-radius:9px;background:linear-gradient(135deg,#6366f1,#8b5cf6);display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:14px;flex-shrink:0}
+
+/* SR ASSIGN BADGE */
+.sr-assigned{display:inline-flex;align-items:center;gap:5px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:7px;padding:4px 10px;font-size:12px;font-weight:700;color:#15803d}
+.sr-unassigned{display:inline-flex;align-items:center;gap:5px;background:#fef9c3;border:1px solid #fde68a;border-radius:7px;padding:4px 10px;font-size:12px;font-weight:700;color:#a16207;cursor:pointer;transition:all 0.15s}
+.sr-unassigned:hover{background:#f59e0b;color:white;border-color:#f59e0b}
+
+.badge{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:100px;font-size:11.5px;font-weight:700}
+.badge-green{background:#dcfce7;color:#15803d}
+.badge-gray{background:#f1f5f9;color:#64748b}
+
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;border:none;font-family:var(--font);transition:all 0.18s;text-decoration:none;white-space:nowrap}
+.btn-sm{padding:5px 11px;font-size:11.5px;border-radius:7px}
+.btn-primary{background:linear-gradient(135deg,#6366f1,#8b5cf6);color:white}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(99,102,241,0.38);color:white}
+.btn-ghost{background:var(--surface2);color:var(--text2);border:1.5px solid var(--border)}
+.btn-ghost:hover{background:var(--border);color:var(--text)}
+.btn-edit{background:#eff6ff;color:#2563eb;border:1px solid #bfdbfe}
+.btn-edit:hover{background:#2563eb;color:white}
+.btn-danger{background:#fef2f2;color:var(--danger);border:1px solid #fecaca}
+.btn-danger:hover{background:var(--danger);color:white}
+.btn-success{background:linear-gradient(135deg,#10b981,#059669);color:white}
+.btn-success:hover{color:white;transform:translateY(-1px)}
+.btn-warning{background:linear-gradient(135deg,#f59e0b,#d97706);color:white}
+.btn-warning:hover{color:white;transform:translateY(-1px)}
+
+.modal-overlay{position:fixed;inset:0;background:rgba(15,23,42,0.5);backdrop-filter:blur(4px);z-index:500;display:flex;align-items:center;justify-content:center;padding:24px;opacity:0;pointer-events:none;transition:opacity 0.2s}
+.modal-overlay.open{opacity:1;pointer-events:all}
+.modal-box{background:var(--surface);border-radius:20px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;box-shadow:0 25px 60px rgba(0,0,0,0.15);transform:scale(0.96);transition:transform 0.2s}
+.modal-overlay.open .modal-box{transform:scale(1)}
+.modal-hdr{padding:20px 24px;border-bottom:1px solid var(--border2);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:white;z-index:1}
+.modal-hdr h3{font-size:17px;font-weight:800}
+.modal-close{width:30px;height:30px;border-radius:8px;background:var(--surface2);border:1px solid var(--border);cursor:pointer;font-size:15px}
+.modal-body{padding:22px 24px}
+.modal-footer{padding:14px 24px;border-top:1px solid var(--border2);display:flex;justify-content:flex-end;gap:10px;position:sticky;bottom:0;background:white}
+.form-group{margin-bottom:14px}
+.form-label{display:block;font-size:12px;font-weight:700;color:var(--text2);margin-bottom:6px}
+.form-control{width:100%;padding:10px 13px;border:2px solid var(--border);border-radius:9px;font-family:var(--font);font-size:13.5px;color:var(--text);background:var(--surface2);outline:none;transition:all 0.18s}
+.form-control:focus{border-color:var(--accent);background:white;box-shadow:0 0 0 3px rgba(99,102,241,0.1)}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.alert{padding:10px 14px;border-radius:9px;font-size:13px;font-weight:600;margin-bottom:12px;display:none}
+.alert-danger{background:#fef2f2;border:1px solid #fecaca;color:#b91c1c}
+.alert-success{background:#f0fdf4;border:1px solid #bbf7d0;color:#15803d}
+
+/* ASSIGN MODAL SPECIAL */
+.assign-customer-info{background:linear-gradient(135deg,#f5f3ff,#ede9fe);border:1.5px solid #c4b5fd;border-radius:12px;padding:16px 18px;margin-bottom:18px;display:flex;align-items:center;gap:14px}
+.assign-avatar{width:46px;height:46px;border-radius:12px;background:linear-gradient(135deg,#6366f1,#8b5cf6);display:flex;align-items:center;justify-content:center;color:white;font-size:20px;font-weight:900;flex-shrink:0}
+.assign-cname{font-size:16px;font-weight:800;color:var(--text)}
+.assign-cemail{font-size:12px;color:var(--text3);margin-top:2px}
+
+.task-toggle{background:var(--surface2);border:2px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:14px;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:space-between}
+.task-toggle.on{background:#f0fdf4;border-color:#10b981}
+.task-toggle-label{font-size:13.5px;font-weight:700;color:var(--text2)}
+.task-toggle.on .task-toggle-label{color:#15803d}
+.toggle-switch{width:40px;height:22px;background:#cbd5e1;border-radius:100px;position:relative;transition:all 0.2s;flex-shrink:0}
+.toggle-switch::after{content:'';position:absolute;top:3px;left:3px;width:16px;height:16px;background:white;border-radius:50%;transition:all 0.2s}
+.task-toggle.on .toggle-switch{background:#10b981}
+.task-toggle.on .toggle-switch::after{left:21px}
+.task-fields{display:none;margin-top:4px}
+.task-fields.show{display:block}
+
+.section-divider{border-top:2px dashed var(--border);margin:16px 0;padding-top:16px}
+.section-title{font-size:12px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px}
+
+.view-field{display:flex;gap:10px;padding:10px 13px;background:var(--surface2);border-radius:8px;margin-bottom:8px;font-size:13.5px}
+.view-field-label{font-weight:700;color:var(--text3);min-width:90px;font-size:11.5px;text-transform:uppercase;letter-spacing:0.5px;padding-top:1px;flex-shrink:0}
+.view-field-val{color:var(--text);font-weight:600}
+.view-id-box{background:linear-gradient(135deg,#f8fafc,#f1f5f9);border:2px solid #cbd5e1;border-radius:12px;padding:16px 20px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between}
+.copy-btn{background:var(--accent);color:white;border:none;padding:7px 14px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font)}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-brand"><div class="logo-icon">⚡</div>CRM Pro</div>
+  <div class="topbar-right">
+    <span class="topbar-user">Hello, <strong id="userName">Admin</strong></span>
+    <button class="topbar-btn" onclick="logout()">Sign Out</button>
+  </div>
+</div>
+
+<div class="sidebar">
+  <div class="sidebar-section">Main</div>
+  <a href="admin-dashboard.html"><span class="s-icon">📊</span>Dashboard</a>
+  <a href="kanban.html"><span class="s-icon">📋</span>Kanban Board</a>
+  <div class="sidebar-section">Management</div>
+  <a href="sales-reps.html"><span class="s-icon">👥</span>Sales Reps</a>
+  <a href="customers.html" class="active"><span class="s-icon">🧑</span>Customers</a>
+  <a href="tasks.html"><span class="s-icon">✅</span>All Tasks</a>
+  <div class="sidebar-section">Admin</div>
+  <a href="service-requests.html"><span class="s-icon">📬</span>Service Requests</a>
+  <a href="reports.html"><span class="s-icon">📈</span>Reports</a>
+  <div class="sidebar-section">Site</div>
+  <a href="index.html" target="_blank"><span class="s-icon">🌐</span>Landing Page</a>
+</div>
+
+<div class="main"><div class="page">
+
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px;flex-wrap:wrap;gap:12px">
+    <div>
+      <h1 style="font-size:26px;font-weight:800;letter-spacing:-0.5px">🧑 Customers</h1>
+      <p style="font-size:13.5px;color:var(--text3);margin-top:3px" id="custSubtitle">Loading...</p>
+    </div>
+    <button class="btn btn-primary" onclick="openAddModal()">+ Add Customer</button>
+  </div>
+
+  <div class="stat-row">
+    <div class="stat-card c1">
+      <div class="sc-icon" style="background:#e0e7ff">🧑</div>
+      <div><div class="sc-val" id="s-total" style="color:#6366f1">–</div><div class="sc-lbl">Total Customers</div></div>
+    </div>
+    <div class="stat-card c2">
+      <div class="sc-icon" style="background:#dcfce7">✅</div>
+      <div><div class="sc-val" id="s-assigned" style="color:#10b981">–</div><div class="sc-lbl">Assigned to SR</div></div>
+    </div>
+    <div class="stat-card c3">
+      <div class="sc-icon" style="background:#fef9c3">⏳</div>
+      <div><div class="sc-val" id="s-unassigned" style="color:#f59e0b">–</div><div class="sc-lbl">Unassigned</div></div>
+    </div>
+  </div>
+
+  <div class="filter-bar">
+    <input id="searchInput" class="filter-search" placeholder="🔍 Search by name, email, company, ID..." oninput="renderTable()">
+    <select id="statusFilter" class="filter-select" onchange="renderTable()">
+      <option value="">All Statuses</option>
+      <option value="Active">✅ Active</option>
+      <option value="Inactive">💤 Inactive</option>
+    </select>
+    <select id="assignFilter" class="filter-select" onchange="renderTable()">
+      <option value="">All Customers</option>
+      <option value="assigned">✅ Assigned</option>
+      <option value="unassigned">⚠️ Unassigned</option>
+    </select>
+    <span style="margin-left:auto;font-size:12.5px;color:var(--text3);font-weight:600" id="resultCount"></span>
+  </div>
+
+  <div class="tbl-wrap">
+    <table class="tbl">
+      <thead>
+        <tr>
+          <th>Customer ID</th>
+          <th>Customer</th>
+          <th>Contact</th>
+          <th>Company</th>
+          <th>Status</th>
+          <th>Assigned SR</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="custTableBody">
+        <tr><td colspan="7" style="text-align:center;padding:60px;color:var(--text3)">
+          <div style="font-size:36px;margin-bottom:10px">⏳</div>
+          <div style="font-weight:600">Loading customers...</div>
+        </td></tr>
+      </tbody>
+    </table>
+    <div class="tbl-footer" id="tblFooter"></div>
+  </div>
+
+</div></div>
+
+<!-- ADD MODAL -->
+<div class="modal-overlay" id="addModal">
+  <div class="modal-box">
+    <div class="modal-hdr"><h3>➕ Add Customer</h3><button class="modal-close" onclick="closeAdd()">✕</button></div>
+    <div class="modal-body">
+      <div class="alert alert-danger" id="addErr"></div>
+      <div class="grid-2">
+        <div class="form-group"><label class="form-label">Full Name *</label><input id="addName" class="form-control" placeholder="John Doe"></div>
+        <div class="form-group"><label class="form-label">Email</label><input id="addEmail" class="form-control" type="email" placeholder="john@company.com"></div>
+      </div>
+      <div class="grid-2">
+        <div class="form-group"><label class="form-label">Phone</label><input id="addPhone" class="form-control" placeholder="+91 98765 43210"></div>
+        <div class="form-group"><label class="form-label">Company</label><input id="addCompany" class="form-control" placeholder="Acme Corp"></div>
+      </div>
+      <div class="grid-2">
+        <div class="form-group"><label class="form-label">Address</label><input id="addAddress" class="form-control" placeholder="Bengaluru, Karnataka"></div>
+        <div class="form-group"><label class="form-label">Status</label>
+          <select id="addStatus" class="form-control"><option value="Active">✅ Active</option><option value="Inactive">💤 Inactive</option></select>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeAdd()">Cancel</button>
+      <button class="btn btn-primary" onclick="submitAdd()">Add Customer</button>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT MODAL -->
+<div class="modal-overlay" id="editModal">
+  <div class="modal-box">
+    <div class="modal-hdr"><h3>✏️ Edit Customer</h3><button class="modal-close" onclick="closeEdit()">✕</button></div>
+    <div class="modal-body">
+      <div class="alert alert-danger" id="editErr"></div>
+      <div class="alert alert-success" id="editOk"></div>
+      <input type="hidden" id="editId">
+      <div style="background:#f5f3ff;border:1.5px solid #c7d2fe;border-radius:10px;padding:12px 16px;margin-bottom:16px;display:flex;align-items:center;gap:10px">
+        <span style="font-size:18px">🪪</span>
+        <div>
+          <div style="font-size:10px;font-weight:700;color:#6366f1;text-transform:uppercase;letter-spacing:1px">Customer ID</div>
+          <div style="font-size:20px;font-weight:900;color:#4338ca" id="editIdDisplay">–</div>
+        </div>
+      </div>
+      <div class="grid-2">
+        <div class="form-group"><label class="form-label">Full Name *</label><input id="editName" class="form-control"></div>
+        <div class="form-group"><label class="form-label">Email</label><input id="editEmail" class="form-control" type="email"></div>
+      </div>
+      <div class="grid-2">
+        <div class="form-group"><label class="form-label">Phone</label><input id="editPhone" class="form-control"></div>
+        <div class="form-group"><label class="form-label">Company</label><input id="editCompany" class="form-control"></div>
+      </div>
+      <div class="grid-2">
+        <div class="form-group"><label class="form-label">Address</label><input id="editAddress" class="form-control"></div>
+        <div class="form-group"><label class="form-label">Status</label>
+          <select id="editStatus" class="form-control"><option value="Active">✅ Active</option><option value="Inactive">💤 Inactive</option></select>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeEdit()">Cancel</button>
+      <button class="btn btn-primary" onclick="submitEdit()">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- ASSIGN TO SR MODAL -->
+<div class="modal-overlay" id="assignModal">
+  <div class="modal-box">
+    <div class="modal-hdr"><h3>👥 Assign to Sales Rep</h3><button class="modal-close" onclick="closeAssign()">✕</button></div>
+    <div class="modal-body">
+      <div class="alert alert-danger" id="assignErr"></div>
+      <div class="alert alert-success" id="assignOk"></div>
+      <input type="hidden" id="assignCustomerId">
+
+      <!-- Customer info -->
+      <div class="assign-customer-info">
+        <div class="assign-avatar" id="assignAvatar">?</div>
+        <div>
+          <div class="assign-cname" id="assignCName">—</div>
+          <div class="assign-cemail" id="assignCEmail">—</div>
+          <div style="margin-top:6px" id="assignCId"></div>
+        </div>
+      </div>
+
+      <!-- Pick SR -->
+      <div class="form-group">
+        <label class="form-label">Select Sales Representative *</label>
+        <select id="assignSRSelect" class="form-control" onchange="updateTaskTitle()">
+          <option value="">— Choose a Sales Rep —</option>
+        </select>
+      </div>
+
+      <div class="section-divider">
+        <div class="section-title">📋 Auto-create a Task for this SR?</div>
+
+        <!-- Toggle -->
+        <div class="task-toggle" id="taskToggle" onclick="toggleTask()">
+          <span class="task-toggle-label">📋 Also assign a task to this SR</span>
+          <div class="toggle-switch"></div>
+        </div>
+
+        <!-- Task fields (shown when toggle is ON) -->
+        <div class="task-fields" id="taskFields">
+          <div class="form-group">
+            <label class="form-label">Task Title *</label>
+            <input id="taskTitle" class="form-control" placeholder="e.g. Follow up with customer">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Task Description</label>
+            <textarea id="taskDesc" class="form-control" rows="2" placeholder="Add details about what needs to be done..."></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Due Date</label>
+            <input id="taskDue" type="date" class="form-control">
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeAssign()">Cancel</button>
+      <button class="btn btn-success" onclick="submitAssign()">✅ Assign</button>
+    </div>
+  </div>
+</div>
+
+<!-- VIEW MODAL -->
+<div class="modal-overlay" id="viewModal">
+  <div class="modal-box">
+    <div class="modal-hdr"><h3>🪪 Customer Profile</h3><button class="modal-close" onclick="closeView()">✕</button></div>
+    <div class="modal-body" id="viewBody"></div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeView()">Close</button>
+      <button class="btn btn-primary" id="viewEditBtn">✏️ Edit</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const API_BASE = 'http://localhost:5271/api';
+function getToken() { return localStorage.getItem('token'); }
+function logout() { localStorage.clear(); window.location.href = 'login.html'; }
+if (!getToken()) window.location.href = 'login.html';
+if (localStorage.getItem('role') !== 'Admin') window.location.href = 'sr-dashboard.html?id=' + localStorage.getItem('userId');
+document.getElementById('userName').textContent = localStorage.getItem('userName') || 'Admin';
+
+const Api = {
+  get: async (url) => {
+    const r = await fetch(API_BASE + url, { headers: { 'Authorization': 'Bearer ' + getToken() } });
+    if (r.status === 401) { logout(); return null; }
+    return r.json();
+  },
+  post: async (url, body) => {
+    const r = await fetch(API_BASE + url, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + getToken() }, body: JSON.stringify(body) });
+    if (!r.ok) throw new Error(await r.text());
+    return r.json();
+  },
+  put: async (url, body) => {
+    const r = await fetch(API_BASE + url, { method: 'PUT', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + getToken() }, body: JSON.stringify(body) });
+    if (!r.ok) throw new Error(await r.text());
+    return r.json();
+  },
+  delete: async (url) => {
+    const r = await fetch(API_BASE + url, { method: 'DELETE', headers: { 'Authorization': 'Bearer ' + getToken() } });
+    if (!r.ok) throw new Error(await r.text());
+    return r.json();
+  }
+};
+
+let allCustomers = [];
+let allSRs = [];
+
+async function loadCustomers() {
+  [allCustomers, allSRs] = await Promise.all([
+    Api.get('/customer') || [],
+    Api.get('/salesrep') || []
+  ]);
+  allCustomers = allCustomers || [];
+  allSRs = allSRs || [];
+
+  const total      = allCustomers.length;
+  const assigned   = allCustomers.filter(c => c.salesRepId).length;
+  const unassigned = total - assigned;
+  document.getElementById('s-total').textContent     = total;
+  document.getElementById('s-assigned').textContent  = assigned;
+  document.getElementById('s-unassigned').textContent= unassigned;
+  document.getElementById('custSubtitle').textContent = `${total} customer${total !== 1 ? 's' : ''} — ${unassigned} unassigned`;
+
+  // Populate SR dropdown in assign modal
+  document.getElementById('assignSRSelect').innerHTML =
+    '<option value="">— Choose a Sales Rep —</option>' +
+    allSRs.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
+
+  renderTable();
+}
+
+function renderTable() {
+  const search   = document.getElementById('searchInput').value.toLowerCase();
+  const status   = document.getElementById('statusFilter').value;
+  const assigned = document.getElementById('assignFilter').value;
+
+  let list = allCustomers.filter(c => {
+    if (status && c.status !== status) return false;
+    if (assigned === 'assigned'   && !c.salesRepId) return false;
+    if (assigned === 'unassigned' &&  c.salesRepId) return false;
+    if (search && !c.name.toLowerCase().includes(search) &&
+        !(c.email||'').toLowerCase().includes(search) &&
+        !(c.company||'').toLowerCase().includes(search) &&
+        !String(c.id).includes(search)) return false;
+    return true;
+  });
+
+  document.getElementById('resultCount').textContent = `${list.length} result${list.length !== 1 ? 's' : ''}`;
+  document.getElementById('tblFooter').textContent   = `Showing ${list.length} of ${allCustomers.length} customers`;
+
+  const srMap = {};
+  allSRs.forEach(s => srMap[s.id] = s.name);
+
+  const tbody = document.getElementById('custTableBody');
+  if (!list.length) {
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:50px;color:var(--text3)">
+      <div style="font-size:36px;margin-bottom:10px">🔍</div>
+      <div style="font-weight:600">No customers found</div></td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = list.map((c, i) => {
+    const srName = c.salesRepId ? srMap[c.salesRepId] : null;
+    const srCell = srName
+      ? `<span class="sr-assigned">👤 ${srName}</span>`
+      : `<span class="sr-unassigned" onclick='openAssign(${JSON.stringify(c)})'>⚠️ Assign SR</span>`;
+
+    return `<tr style="animation:fadeUp 0.25s ${i * 0.03}s ease both">
+      <td><div class="cid-pill"><span>ID</span>#${String(c.id).padStart(4,'0')}</div></td>
+      <td>
+        <div style="display:flex;align-items:center;gap:10px">
+          <div class="cust-avatar">${c.name.charAt(0).toUpperCase()}</div>
+          <div>
+            <div style="font-weight:700;font-size:14px">${c.name}</div>
+            ${c.createdAt ? `<div style="font-size:11px;color:var(--text3)">Since ${new Date(c.createdAt).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'})}</div>` : ''}
+          </div>
+        </div>
+      </td>
+      <td>
+        <div style="font-size:13px;color:var(--text2)">${c.email||'—'}</div>
+        <div style="font-size:12px;color:var(--text3);margin-top:2px">${c.phone||'—'}</div>
+      </td>
+      <td style="font-weight:600">${c.company||'—'}</td>
+      <td><span class="badge ${c.status==='Active'?'badge-green':'badge-gray'}">${c.status==='Active'?'✅ Active':'💤 Inactive'}</span></td>
+      <td>${srCell}</td>
+      <td>
+        <div style="display:flex;gap:5px;flex-wrap:wrap">
+          <button class="btn btn-warning btn-sm" onclick='openAssign(${JSON.stringify(c)})'>👥 ${srName ? 'Reassign' : 'Assign'}</button>
+          <button class="btn btn-ghost btn-sm" onclick='viewCustomer(${JSON.stringify(c)})'>👁</button>
+          <button class="btn btn-edit btn-sm" onclick='openEdit(${JSON.stringify(c)})'>✏️</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteCustomer(${c.id},'${c.name.replace(/'/g,"\\'")}')">🗑</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+// ── ASSIGN MODAL ─────────────────────────────────────────────
+let taskToggleOn = false;
+
+function openAssign(c) {
+  document.getElementById('assignCustomerId').value = c.id;
+  document.getElementById('assignAvatar').textContent = c.name.charAt(0).toUpperCase();
+  document.getElementById('assignCName').textContent  = c.name;
+  document.getElementById('assignCEmail').textContent = c.email || 'No email';
+  document.getElementById('assignCId').innerHTML = `<div class="cid-pill"><span>ID</span>#${String(c.id).padStart(4,'0')}</div>`;
+  document.getElementById('assignSRSelect').value = c.salesRepId || '';
+  document.getElementById('assignErr').style.display = 'none';
+  document.getElementById('assignOk').style.display  = 'none';
+
+  // Reset task toggle
+  taskToggleOn = false;
+  document.getElementById('taskToggle').classList.remove('on');
+  document.getElementById('taskFields').classList.remove('show');
+  document.getElementById('taskTitle').value = `Follow up with ${c.name}`;
+  document.getElementById('taskDesc').value  = `Customer #${String(c.id).padStart(4,'0')} — ${c.company || c.email || ''}`;
+  // Default due date = 3 days from now
+  const due = new Date(); due.setDate(due.getDate() + 3);
+  document.getElementById('taskDue').value = due.toISOString().split('T')[0];
+
+  document.getElementById('assignModal').classList.add('open');
+}
+function closeAssign() { document.getElementById('assignModal').classList.remove('open'); }
+
+function toggleTask() {
+  taskToggleOn = !taskToggleOn;
+  document.getElementById('taskToggle').classList.toggle('on', taskToggleOn);
+  document.getElementById('taskFields').classList.toggle('show', taskToggleOn);
+}
+
+function updateTaskTitle() {
+  const srId = document.getElementById('assignSRSelect').value;
+  const custName = document.getElementById('assignCName').textContent;
+  if (srId && custName) {
+    const srName = allSRs.find(s => s.id == srId)?.name || '';
+    document.getElementById('taskTitle').value = `Follow up with ${custName}`;
+    document.getElementById('taskDesc').value  = `Assigned by admin to ${srName} — Customer #${String(document.getElementById('assignCustomerId').value).padStart(4,'0')}`;
+  }
+}
+
+async function submitAssign() {
+  const customerId = document.getElementById('assignCustomerId').value;
+  const srId       = document.getElementById('assignSRSelect').value;
+  const errEl      = document.getElementById('assignErr');
+  const okEl       = document.getElementById('assignOk');
+  errEl.style.display = 'none'; okEl.style.display = 'none';
+
+  if (!srId) { errEl.textContent = '⚠️ Please select a Sales Rep.'; errEl.style.display = 'block'; return; }
+
+  try {
+    // 1. Update customer's SalesRepId
+    const customer = allCustomers.find(c => c.id == customerId);
+    await Api.put(`/customer/${customerId}`, { ...customer, salesRepId: parseInt(srId) });
+
+    // 2. Create task if toggle is ON
+    if (taskToggleOn) {
+      const title = document.getElementById('taskTitle').value.trim();
+      if (!title) { errEl.textContent = '⚠️ Task title is required.'; errEl.style.display = 'block'; return; }
+      const dueVal = document.getElementById('taskDue').value;
+      await Api.post('/task', {
+        title,
+        description: document.getElementById('taskDesc').value.trim(),
+        status:      'Pending',
+        dueDate:     dueVal ? new Date(dueVal).toISOString() : new Date().toISOString(),
+        salesRepId:  parseInt(srId)
+      });
+      okEl.textContent = '✅ Customer assigned and task created!';
+    } else {
+      okEl.textContent = '✅ Customer assigned to Sales Rep!';
+    }
+
+    okEl.style.display = 'block';
+    await loadCustomers();
+    setTimeout(closeAssign, 1000);
+  } catch(e) {
+    errEl.textContent = '⚠️ ' + e.message;
+    errEl.style.display = 'block';
+  }
+}
+
+// ── ADD ───────────────────────────────────────────────────────
+function openAddModal() { document.getElementById('addModal').classList.add('open'); }
+function closeAdd() { document.getElementById('addModal').classList.remove('open'); document.getElementById('addErr').style.display = 'none'; }
+
+async function submitAdd() {
+  const name  = document.getElementById('addName').value.trim();
+  const errEl = document.getElementById('addErr');
+  errEl.style.display = 'none';
+  if (!name) { errEl.textContent = '⚠️ Customer name is required.'; errEl.style.display = 'block'; return; }
+  try {
+    await Api.post('/customer', {
+      name, email: document.getElementById('addEmail').value.trim(),
+      phone: document.getElementById('addPhone').value.trim(),
+      company: document.getElementById('addCompany').value.trim(),
+      address: document.getElementById('addAddress').value.trim(),
+      status:  document.getElementById('addStatus').value
+    });
+    closeAdd();
+    ['addName','addEmail','addPhone','addCompany','addAddress'].forEach(id => document.getElementById(id).value = '');
+    await loadCustomers();
+  } catch(e) { errEl.textContent = '⚠️ ' + e.message; errEl.style.display = 'block'; }
+}
+
+// ── EDIT ──────────────────────────────────────────────────────
+function openEdit(c) {
+  document.getElementById('editId').value = c.id;
+  document.getElementById('editIdDisplay').textContent = '#' + String(c.id).padStart(4,'0');
+  document.getElementById('editName').value    = c.name;
+  document.getElementById('editEmail').value   = c.email || '';
+  document.getElementById('editPhone').value   = c.phone || '';
+  document.getElementById('editCompany').value = c.company || '';
+  document.getElementById('editAddress').value = c.address || '';
+  document.getElementById('editStatus').value  = c.status || 'Active';
+  document.getElementById('editErr').style.display = 'none';
+  document.getElementById('editOk').style.display  = 'none';
+  document.getElementById('editModal').classList.add('open');
+}
+function closeEdit() { document.getElementById('editModal').classList.remove('open'); }
+
+async function submitEdit() {
+  const id    = document.getElementById('editId').value;
+  const name  = document.getElementById('editName').value.trim();
+  const errEl = document.getElementById('editErr');
+  const okEl  = document.getElementById('editOk');
+  errEl.style.display = 'none'; okEl.style.display = 'none';
+  if (!name) { errEl.textContent = '⚠️ Name is required.'; errEl.style.display = 'block'; return; }
+  const existing = allCustomers.find(c => c.id == id);
+  try {
+    await Api.put('/customer/' + id, {
+      ...existing,
+      name, email: document.getElementById('editEmail').value.trim(),
+      phone: document.getElementById('editPhone').value.trim(),
+      company: document.getElementById('editCompany').value.trim(),
+      address: document.getElementById('editAddress').value.trim(),
+      status:  document.getElementById('editStatus').value
+    });
+    okEl.textContent = '✅ Updated!'; okEl.style.display = 'block';
+    await loadCustomers();
+    setTimeout(closeEdit, 900);
+  } catch(e) { errEl.textContent = '⚠️ ' + e.message; errEl.style.display = 'block'; }
+}
+
+// ── VIEW ──────────────────────────────────────────────────────
+function viewCustomer(c) {
+  const srName = allSRs.find(s => s.id === c.salesRepId)?.name;
+  document.getElementById('viewBody').innerHTML = `
+    <div class="view-id-box">
+      <div>
+        <div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">🪪 Customer ID</div>
+        <div style="font-size:28px;font-weight:900;color:var(--accent)">#${String(c.id).padStart(4,'0')}</div>
+      </div>
+      <button class="copy-btn" onclick="navigator.clipboard.writeText('${c.id}').then(()=>alert('ID copied!'))">📋 Copy</button>
+    </div>
+    <div class="view-field"><span class="view-field-label">Name</span><span class="view-field-val">${c.name}</span></div>
+    <div class="view-field"><span class="view-field-label">Email</span><span class="view-field-val">${c.email||'—'}</span></div>
+    <div class="view-field"><span class="view-field-label">Phone</span><span class="view-field-val">${c.phone||'—'}</span></div>
+    <div class="view-field"><span class="view-field-label">Company</span><span class="view-field-val">${c.company||'—'}</span></div>
+    <div class="view-field"><span class="view-field-label">Address</span><span class="view-field-val">${c.address||'—'}</span></div>
+    <div class="view-field"><span class="view-field-label">Status</span><span class="view-field-val"><span class="badge ${c.status==='Active'?'badge-green':'badge-gray'}">${c.status||'Active'}</span></span></div>
+    <div class="view-field"><span class="view-field-label">Assigned SR</span><span class="view-field-val">${srName ? `<span class="sr-assigned">👤 ${srName}</span>` : '<span style="color:var(--warning)">⚠️ Not assigned</span>'}</span></div>
+    ${c.createdAt ? `<div class="view-field"><span class="view-field-label">Joined</span><span class="view-field-val">${new Date(c.createdAt).toLocaleDateString('en-GB',{weekday:'long',year:'numeric',month:'long',day:'numeric'})}</span></div>` : ''}
+  `;
+  document.getElementById('viewEditBtn').onclick = () => { closeView(); openEdit(c); };
+  document.getElementById('viewModal').classList.add('open');
+}
+function closeView() { document.getElementById('viewModal').classList.remove('open'); }
+
+// ── DELETE ────────────────────────────────────────────────────
+async function deleteCustomer(id, name) {
+  if (!confirm(`Delete "${name}"? This cannot be undone.`)) return;
+  try { await Api.delete('/customer/' + id); await loadCustomers(); }
+  catch(e) { alert('Failed: ' + e.message); }
+}
+
+loadCustomers();
+</script>
+</body>
+</html>

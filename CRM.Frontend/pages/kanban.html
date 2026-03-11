@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Kanban Board – CRM Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f0f2f5;--surface:#fff;--surface2:#f8fafc;--border:#e2e8f0;--border2:#f1f5f9;--text:#0f172a;--text2:#475569;--text3:#94a3b8;--accent:#6366f1;--success:#10b981;--warning:#f59e0b;--danger:#ef4444;--inprogress:#3b82f6;--sidebar-w:240px;--nav-h:64px;--radius:14px;--font:'Plus Jakarta Sans',sans-serif}
+*{box-sizing:border-box;margin:0;padding:0;font-family:var(--font)}
+body{background:var(--bg);color:var(--text);min-height:100vh}
+.topbar{position:fixed;top:0;left:0;right:0;height:var(--nav-h);background:#0f172a;border-bottom:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;padding:0 24px 0 0;z-index:200}
+.topbar-brand{width:var(--sidebar-w);display:flex;align-items:center;gap:10px;padding:0 24px;flex-shrink:0;font-size:18px;font-weight:800;color:white}
+.logo-icon{width:34px;height:34px;background:linear-gradient(135deg,#6366f1,#8b5cf6);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:12px}
+.topbar-user{color:rgba(255,255,255,0.6);font-size:13px;font-weight:500}
+.topbar-user strong{color:white;font-weight:700}
+.topbar-btn{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);color:rgba(255,255,255,0.8);padding:7px 16px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font);transition:all 0.2s}
+.topbar-btn:hover{background:rgba(255,255,255,0.15);color:white}
+.sidebar{position:fixed;top:var(--nav-h);left:0;bottom:0;width:var(--sidebar-w);background:#0f172a;border-right:1px solid rgba(255,255,255,0.05);padding:20px 12px;overflow-y:auto;z-index:100;display:flex;flex-direction:column;gap:2px}
+.sidebar-section{font-size:10px;font-weight:700;letter-spacing:1.5px;color:rgba(255,255,255,0.25);text-transform:uppercase;padding:12px 12px 6px;margin-top:8px}
+.sidebar a{display:flex;align-items:center;gap:10px;padding:10px 12px;color:rgba(255,255,255,0.5);text-decoration:none;font-weight:500;font-size:13.5px;border-radius:9px;transition:all 0.15s}
+.sidebar a:hover{background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.85)}
+.sidebar a.active{background:linear-gradient(135deg,rgba(99,102,241,0.25),rgba(139,92,246,0.15));color:#a5b4fc;border:1px solid rgba(99,102,241,0.25)}
+.s-icon{font-size:16px;flex-shrink:0}
+.main{margin-left:var(--sidebar-w);padding-top:var(--nav-h);min-height:100vh;display:flex;flex-direction:column}
+
+/* TOP STATS BAR */
+.stats-bar{background:var(--surface);border-bottom:1px solid var(--border);padding:14px 28px;display:flex;align-items:center;gap:24px;flex-wrap:wrap}
+.stat-pill{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--text2)}
+.stat-pill-dot{width:10px;height:10px;border-radius:50%}
+.stat-pill-val{font-size:18px;font-weight:900}
+
+/* SR FILTER BAR */
+.sr-bar{padding:12px 28px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;overflow-x:auto}
+.sr-pill{display:flex;align-items:center;gap:7px;padding:7px 14px;border-radius:100px;border:1.5px solid var(--border);background:var(--surface2);cursor:pointer;transition:all 0.15s;flex-shrink:0;font-size:12.5px;font-weight:600;color:var(--text2)}
+.sr-pill:hover,.sr-pill.active{background:var(--accent);color:white;border-color:var(--accent)}
+.sr-dot-sm{width:20px;height:20px;border-radius:5px;background:linear-gradient(135deg,#6366f1,#8b5cf6);display:flex;align-items:center;justify-content:center;color:white;font-size:9px;font-weight:800;flex-shrink:0}
+.sr-pill.active .sr-dot-sm{background:rgba(255,255,255,0.25)}
+.sr-sub{font-size:10px;opacity:0.7}
+
+/* FILTER BAR */
+.filter-bar{padding:10px 28px;background:var(--surface2);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.filter-search{padding:7px 13px;border:1.5px solid var(--border);border-radius:9px;font-family:var(--font);font-size:13px;outline:none;background:white;color:var(--text);min-width:200px;transition:all 0.2s}
+.filter-search:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(99,102,241,0.1)}
+.filter-select{padding:7px 12px;border:1.5px solid var(--border);border-radius:9px;font-family:var(--font);font-size:13px;outline:none;background:white;cursor:pointer;color:var(--text)}
+
+/* KANBAN */
+.kanban-wrap{flex:1;padding:22px 28px;overflow-x:auto}
+.kanban-board{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;min-height:calc(100vh - 300px);align-items:start}
+.kanban-col{display:flex;flex-direction:column;background:var(--surface);border:1.5px solid var(--border);border-radius:16px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.06)}
+.col-hdr{padding:14px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1.5px solid var(--border)}
+.col-hdr-left{display:flex;align-items:center;gap:8px}
+.col-title{font-size:14px;font-weight:800}
+.col-count{padding:3px 10px;border-radius:100px;font-size:11px;font-weight:800}
+.col-body{padding:12px;display:flex;flex-direction:column;gap:10px;min-height:300px;transition:background 0.2s}
+.col-body.drag-over{background:#eef2ff;outline:2px dashed #6366f1;outline-offset:-4px;border-radius:8px}
+.col-empty{text-align:center;padding:36px 16px;color:var(--text3)}
+.col-empty-icon{font-size:32px;margin-bottom:8px;opacity:0.5}
+.col-empty p{font-size:13px;font-weight:500}
+
+/* TASK CARDS */
+.task-card{background:var(--surface);border:1.5px solid var(--border);border-radius:11px;padding:13px 14px;cursor:grab;transition:all 0.2s;animation:fadeUp 0.25s ease both;position:relative}
+.task-card:hover{border-color:#c7d2fe;box-shadow:0 4px 14px rgba(99,102,241,0.1);transform:translateY(-1px)}
+.task-card.dragging{opacity:0.45;cursor:grabbing;transform:rotate(2deg)}
+/* Color left border by status */
+.task-card.status-pending{border-left:3px solid var(--warning)}
+.task-card.status-inprogress{border-left:3px solid var(--inprogress)}
+.task-card.status-completed{border-left:3px solid var(--success);opacity:0.75}
+
+.task-card-hdr{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:5px}
+.task-title{font-size:13.5px;font-weight:700;color:var(--text);line-height:1.4;flex:1;margin-right:8px}
+.task-btns{display:flex;gap:4px;opacity:0;transition:opacity 0.15s}
+.task-card:hover .task-btns{opacity:1}
+.tbtn{width:26px;height:26px;border-radius:6px;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px;transition:all 0.15s}
+.tbtn-ok{background:#dcfce7;color:#15803d}.tbtn-ok:hover{background:#15803d;color:white}
+.tbtn-del{background:#fee2e2;color:#b91c1c}.tbtn-del:hover{background:#b91c1c;color:white}
+
+/* CUSTOMER TAG */
+.task-customer{display:inline-flex;align-items:center;gap:5px;background:#f5f3ff;border:1px solid #ddd6fe;border-radius:6px;padding:3px 8px;font-size:11px;font-weight:700;color:#6d28d9;margin-bottom:7px}
+.task-desc{font-size:12px;color:var(--text3);line-height:1.5;margin-bottom:7px}
+.task-footer{display:flex;align-items:center;justify-content:space-between;padding-top:8px;border-top:1px solid var(--border2);margin-top:6px}
+.task-sr-tag{display:flex;align-items:center;gap:5px;font-size:11.5px;color:var(--text2);font-weight:600}
+.sr-dot{width:20px;height:20px;border-radius:5px;background:linear-gradient(135deg,#6366f1,#8b5cf6);display:flex;align-items:center;justify-content:center;color:white;font-size:9px;font-weight:800;flex-shrink:0}
+.task-due{font-size:11px;font-weight:700}
+.task-due.ok{color:var(--success)}.task-due.soon{color:var(--warning)}.task-due.overdue{color:var(--danger)}
+.status-chip{display:inline-flex;align-items:center;gap:3px;padding:2px 7px;border-radius:100px;font-size:10px;font-weight:700;margin-bottom:5px}
+.sc-pending{background:#fef9c3;color:#a16207}
+.sc-inprogress{background:#dbeafe;color:#1d4ed8}
+.sc-completed{background:#dcfce7;color:#15803d}
+
+/* ADD TASK BUTTON */
+.add-task-btn{display:flex;align-items:center;gap:8px;padding:10px 14px;margin:8px 12px 12px;border-radius:9px;border:1.5px dashed var(--border);color:var(--text3);font-size:13px;font-weight:600;cursor:pointer;transition:all 0.15s;background:transparent;font-family:var(--font)}
+.add-task-btn:hover{border-color:var(--accent);color:var(--accent);background:#f5f3ff}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;border:none;font-family:var(--font);transition:all 0.18s;white-space:nowrap}
+.btn-sm{padding:5px 11px;font-size:11.5px;border-radius:7px}
+.btn-primary{background:linear-gradient(135deg,#6366f1,#8b5cf6);color:white}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(99,102,241,0.38);color:white}
+.btn-ghost{background:var(--surface2);color:var(--text2);border:1.5px solid var(--border)}
+.btn-ghost:hover{background:var(--border);color:var(--text)}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(15,23,42,0.5);backdrop-filter:blur(4px);z-index:500;display:flex;align-items:center;justify-content:center;padding:24px;opacity:0;pointer-events:none;transition:opacity 0.2s}
+.modal-overlay.open{opacity:1;pointer-events:all}
+.modal-box{background:var(--surface);border-radius:20px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;box-shadow:0 25px 60px rgba(0,0,0,0.15);transform:scale(0.96);transition:transform 0.2s}
+.modal-overlay.open .modal-box{transform:scale(1)}
+.modal-hdr{padding:20px 24px;border-bottom:1px solid var(--border2);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:white;z-index:1}
+.modal-hdr h3{font-size:17px;font-weight:800}
+.modal-close{width:30px;height:30px;border-radius:8px;background:var(--surface2);border:1px solid var(--border);cursor:pointer;font-size:15px}
+.modal-body{padding:22px 24px}
+.modal-footer{padding:14px 24px;border-top:1px solid var(--border2);display:flex;justify-content:flex-end;gap:10px;position:sticky;bottom:0;background:white}
+.form-group{margin-bottom:14px}
+.form-label{display:block;font-size:12px;font-weight:700;color:var(--text2);margin-bottom:6px}
+.form-control{width:100%;padding:10px 13px;border:2px solid var(--border);border-radius:9px;font-family:var(--font);font-size:13.5px;color:var(--text);background:var(--surface2);outline:none;transition:all 0.18s}
+.form-control:focus{border-color:var(--accent);background:white;box-shadow:0 0 0 3px rgba(99,102,241,0.1)}
+.alert{padding:10px 14px;border-radius:9px;font-size:13px;font-weight:600;margin-bottom:12px;display:none}
+.alert-danger{background:#fef2f2;border:1px solid #fecaca;color:#b91c1c}
+.alert-success{background:#f0fdf4;border:1px solid #bbf7d0;color:#15803d}
+.info-note{background:#f5f3ff;border:1px solid #ddd6fe;border-radius:9px;padding:10px 13px;font-size:12.5px;color:#6d28d9;font-weight:600;margin-bottom:12px}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="topbar-brand"><div class="logo-icon">⚡</div>CRM Pro</div>
+  <div class="topbar-right">
+    <span class="topbar-user">Hello, <strong id="userName">Admin</strong></span>
+    <button class="topbar-btn" onclick="logout()">Sign Out</button>
+  </div>
+</div>
+<div class="sidebar">
+  <div class="sidebar-section">Main</div>
+  <a href="admin-dashboard.html"><span class="s-icon">📊</span>Dashboard</a>
+  <a href="kanban.html" class="active"><span class="s-icon">📋</span>Kanban Board</a>
+  <div class="sidebar-section">Management</div>
+  <a href="sales-reps.html"><span class="s-icon">👥</span>Sales Reps</a>
+  <a href="customers.html"><span class="s-icon">🧑</span>Customers</a>
+  <a href="tasks.html"><span class="s-icon">✅</span>All Tasks</a>
+  <div class="sidebar-section">Admin</div>
+  <a href="service-requests.html"><span class="s-icon">📬</span>Service Requests</a>
+  <a href="reports.html"><span class="s-icon">📈</span>Reports</a>
+  <div class="sidebar-section">Site</div>
+  <a href="index.html" target="_blank"><span class="s-icon">🌐</span>Landing Page</a>
+</div>
+
+<div class="main">
+  <!-- STATS BAR -->
+  <div class="stats-bar">
+    <div style="font-size:16px;font-weight:800;margin-right:8px">📋 Kanban Board</div>
+    <div style="flex:1"></div>
+    <div class="stat-pill"><div class="stat-pill-dot" style="background:var(--warning)"></div><div><div class="stat-pill-val" id="sp-pending">0</div><div style="font-size:10px;color:var(--text3)">Pending</div></div></div>
+    <div class="stat-pill"><div class="stat-pill-dot" style="background:var(--inprogress)"></div><div><div class="stat-pill-val" id="sp-inprogress">0</div><div style="font-size:10px;color:var(--text3)">In Progress</div></div></div>
+    <div class="stat-pill"><div class="stat-pill-dot" style="background:var(--success)"></div><div><div class="stat-pill-val" id="sp-done">0</div><div style="font-size:10px;color:var(--text3)">Completed</div></div></div>
+    <div class="stat-pill"><div class="stat-pill-dot" style="background:var(--danger)"></div><div><div class="stat-pill-val" id="sp-overdue">0</div><div style="font-size:10px;color:var(--text3)">Overdue</div></div></div>
+    <button class="btn btn-ghost" style="margin-left:8px" onclick="loadBoard()">↻ Refresh</button>
+    <button class="btn btn-primary" onclick="openAssignModal()">+ Assign Task</button>
+  </div>
+
+  <!-- SR FILTER PILLS -->
+  <div class="sr-bar" id="srBar">
+    <div class="sr-pill active" onclick="filterSR('all',this)">👥 All SRs</div>
+  </div>
+
+  <!-- SEARCH + FILTER -->
+  <div class="filter-bar">
+    <input class="filter-search" id="searchInput" placeholder="🔍 Search tasks..." oninput="renderBoard()">
+    <select class="filter-select" id="custFilter" onchange="renderBoard()">
+      <option value="">All Customers</option>
+    </select>
+    <span style="font-size:12px;color:var(--text3);font-weight:600;margin-left:auto" id="boardSummary"></span>
+  </div>
+
+  <!-- KANBAN BOARD -->
+  <div class="kanban-wrap">
+    <div class="kanban-board">
+      <!-- PENDING -->
+      <div class="kanban-col">
+        <div class="col-hdr" style="background:linear-gradient(135deg,#fffbeb,#fef9c3)">
+          <div class="col-hdr-left">
+            <span style="font-size:18px">⏳</span>
+            <span class="col-title" style="color:#a16207">Pending</span>
+          </div>
+          <span class="col-count" style="background:#fef9c3;color:#a16207" id="cnt-Pending">0</span>
+        </div>
+        <div class="col-body" id="col-Pending" ondragover="onDragOver(event,'Pending')" ondragleave="onDragLeave(event)" ondrop="onDrop(event,'Pending')">
+          <div class="col-empty"><div class="col-empty-icon">📋</div><p>Loading...</p></div>
+        </div>
+        <button class="add-task-btn" onclick="openAssignModal()">＋ Add Task</button>
+      </div>
+
+      <!-- IN PROGRESS -->
+      <div class="kanban-col">
+        <div class="col-hdr" style="background:linear-gradient(135deg,#eff6ff,#dbeafe)">
+          <div class="col-hdr-left">
+            <span style="font-size:18px">🔄</span>
+            <span class="col-title" style="color:#1d4ed8">In Progress</span>
+          </div>
+          <span class="col-count" style="background:#dbeafe;color:#1d4ed8" id="cnt-InProgress">0</span>
+        </div>
+        <div class="col-body" id="col-InProgress" ondragover="onDragOver(event,'InProgress')" ondragleave="onDragLeave(event)" ondrop="onDrop(event,'InProgress')">
+          <div class="col-empty"><div class="col-empty-icon">🔄</div><p>Drag tasks here</p></div>
+        </div>
+      </div>
+
+      <!-- COMPLETED -->
+      <div class="kanban-col">
+        <div class="col-hdr" style="background:linear-gradient(135deg,#f0fdf4,#dcfce7)">
+          <div class="col-hdr-left">
+            <span style="font-size:18px">✅</span>
+            <span class="col-title" style="color:#15803d">Completed</span>
+          </div>
+          <span class="col-count" style="background:#dcfce7;color:#15803d" id="cnt-Completed">0</span>
+        </div>
+        <div class="col-body" id="col-Completed" ondragover="onDragOver(event,'Completed')" ondragleave="onDragLeave(event)" ondrop="onDrop(event,'Completed')">
+          <div class="col-empty"><div class="col-empty-icon">🎉</div><p>No completed tasks yet</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ASSIGN TASK MODAL -->
+<div class="modal-overlay" id="assignModal">
+  <div class="modal-box">
+    <div class="modal-hdr"><h3>➕ Assign Task to Sales Rep</h3><button class="modal-close" onclick="closeAssignModal()">✕</button></div>
+    <div class="modal-body">
+      <div class="alert alert-danger" id="assignErr"></div>
+      <div class="form-group">
+        <label class="form-label">Sales Representative *</label>
+        <select id="assignSR" class="form-control" onchange="onSRChange()">
+          <option value="">— Select Sales Rep —</option>
+        </select>
+      </div>
+      <div class="form-group" id="custGroup" style="display:none">
+        <label class="form-label">Link to Customer (optional)</label>
+        <select id="assignCustomer" class="form-control" onchange="onCustomerChange()">
+          <option value="">— No specific customer —</option>
+        </select>
+        <div class="info-note" style="margin-top:8px;margin-bottom:0">💡 Selecting a customer auto-fills the task title and links it in the database</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Task Title *</label>
+        <input id="assignTitle" class="form-control" placeholder="e.g. Follow up with client">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Description</label>
+        <textarea id="assignDesc" class="form-control" rows="3" placeholder="Add details..."></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Due Date</label>
+        <input id="assignDue" type="date" class="form-control">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeAssignModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="submitAssign()">✅ Assign Task</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const API_BASE = 'http://localhost:5271/api';
+function getToken(){ return localStorage.getItem('token'); }
+function logout(){ localStorage.clear(); window.location.href='login.html'; }
+if(!getToken()) window.location.href='login.html';
+if(localStorage.getItem('role')!=='Admin') window.location.href='sr-dashboard.html?id='+localStorage.getItem('userId');
+document.getElementById('userName').textContent = localStorage.getItem('userName')||'Admin';
+
+const Api = {
+  get: async(u)=>{ const r=await fetch(API_BASE+u,{headers:{'Authorization':'Bearer '+getToken()}}); if(r.status===401){logout();return null} return r.json(); },
+  post: async(u,b)=>{ const r=await fetch(API_BASE+u,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+getToken()},body:JSON.stringify(b)}); if(!r.ok)throw new Error(await r.text()); return r.json(); },
+  put: async(u,b)=>{ const r=await fetch(API_BASE+u,{method:'PUT',headers:{'Content-Type':'application/json','Authorization':'Bearer '+getToken()},body:JSON.stringify(b)}); if(!r.ok)throw new Error(await r.text()); return r.json(); },
+  delete: async(u)=>{ const r=await fetch(API_BASE+u,{method:'DELETE',headers:{'Authorization':'Bearer '+getToken()}}); if(!r.ok)throw new Error(await r.text()); return r.json(); }
+};
+
+let allTasks=[], allSRs=[], allCustomers=[], dragId=null, activeSR='all';
+
+async function loadBoard(){
+  [allSRs, allCustomers] = await Promise.all([Api.get('/salesrep'), Api.get('/customer')]);
+  allSRs = allSRs||[]; allCustomers = allCustomers||[];
+  allTasks = [];
+
+  // Load tasks for every SR — each task now has customerId stored in DB
+  for(const sr of allSRs){
+    const tasks = await Api.get('/task/salesrep/'+sr.id)||[];
+    tasks.forEach(t=>{
+      t._srName = sr.name;
+      t._srId   = sr.id;
+      // Use customerId from DB directly — no text parsing needed
+      t._customer = t.customerId ? allCustomers.find(c=>c.id===t.customerId)||null : null;
+      allTasks.push(t);
+    });
+  }
+
+  const now = new Date();
+  // Update stat bar
+  document.getElementById('sp-pending').textContent   = allTasks.filter(t=>t.status==='Pending').length;
+  document.getElementById('sp-inprogress').textContent= allTasks.filter(t=>t.status==='In Progress').length;
+  document.getElementById('sp-done').textContent      = allTasks.filter(t=>t.status==='Completed').length;
+  document.getElementById('sp-overdue').textContent   = allTasks.filter(t=>t.status==='Pending'&&t.dueDate&&new Date(t.dueDate)<now).length;
+
+  // Build SR pill bar
+  const srBar = document.getElementById('srBar');
+  srBar.innerHTML = '<div class="sr-pill active" onclick="filterSR(\'all\',this)">👥 All SRs</div>';
+  allSRs.forEach(sr=>{
+    const pending   = allTasks.filter(t=>t._srId===sr.id&&t.status==='Pending').length;
+    const customers = allCustomers.filter(c=>c.salesRepId===sr.id).length;
+    srBar.innerHTML += `<div class="sr-pill" onclick="filterSR('${sr.id}',this)">
+      <div class="sr-dot-sm">${sr.name.charAt(0).toUpperCase()}</div>
+      <div><div>${sr.name}</div><div class="sr-sub">📋${pending} 🧑${customers}</div></div>
+    </div>`;
+  });
+
+  // Customer filter dropdown — only customers that have tasks
+  const custsWithTasks = allCustomers.filter(c=>allTasks.some(t=>t.customerId===c.id));
+  document.getElementById('custFilter').innerHTML =
+    '<option value="">All Customers</option>' +
+    custsWithTasks.map(c=>`<option value="${c.id}">${c.name} (#${String(c.id).padStart(4,'0')})</option>`).join('');
+
+  // Assign modal SR dropdown
+  document.getElementById('assignSR').innerHTML =
+    '<option value="">— Select Sales Rep —</option>' +
+    allSRs.map(s=>`<option value="${s.id}">${s.name}</option>`).join('');
+
+  // Default due date = 3 days from now
+  const due=new Date(); due.setDate(due.getDate()+3);
+  document.getElementById('assignDue').value = due.toISOString().split('T')[0];
+
+  renderBoard();
+}
+
+function filterSR(id, btn){
+  activeSR = id;
+  document.querySelectorAll('.sr-pill').forEach(p=>p.classList.remove('active'));
+  btn.classList.add('active');
+  renderBoard();
+}
+
+function renderBoard(){
+  const search = document.getElementById('searchInput').value.toLowerCase();
+  const custF  = document.getElementById('custFilter').value;
+  const now    = new Date();
+
+  let tasks = allTasks.filter(t=>{
+    if(activeSR!=='all' && t._srId!=activeSR) return false;
+    if(custF && t.customerId!=custF) return false;
+    if(search && !t.title.toLowerCase().includes(search) &&
+       !(t._srName||'').toLowerCase().includes(search) &&
+       !(t._customer?.name||'').toLowerCase().includes(search)) return false;
+    return true;
+  });
+
+  document.getElementById('boardSummary').textContent = `${tasks.length} task${tasks.length!==1?'s':''} shown`;
+
+  ['Pending','InProgress','Completed'].forEach(col=>{
+    const dbStatus = col==='InProgress'?'In Progress':col;
+    const colTasks = tasks.filter(t=>t.status===dbStatus);
+    document.getElementById('cnt-'+col).textContent = colTasks.length;
+    const container = document.getElementById('col-'+col);
+
+    if(!colTasks.length){
+      const msgs={Pending:'No pending tasks',InProgress:'Drag tasks here to start',Completed:'No completed tasks yet'};
+      const icons={Pending:'📋',InProgress:'🔄',Completed:'🎉'};
+      container.innerHTML=`<div class="col-empty"><div class="col-empty-icon">${icons[col]}</div><p>${msgs[col]}</p></div>`;
+      return;
+    }
+
+    container.innerHTML = colTasks.map((t,i)=>{
+      const due     = t.dueDate ? new Date(t.dueDate) : null;
+      const dueStr  = due ? due.toLocaleDateString('en-GB',{day:'2-digit',month:'short'}) : null;
+      const diff    = due ? Math.ceil((due-now)/(1000*60*60*24)) : null;
+      const dueCls  = !due?'':diff<0?'overdue':diff<=2?'soon':'ok';
+      const dueHtml = dueStr ? `<span class="task-due ${dueCls}">📅 ${dueStr}${diff<0?' ⚠️':''}</span>` : '';
+
+      // Customer tag — uses customerId from DB
+      const custHtml = t._customer
+        ? `<div class="task-customer">🧑 ${t._customer.name} <span style="opacity:0.6">#${String(t._customer.id).padStart(4,'0')}</span></div>`
+        : '';
+
+      const descHtml = t.description
+        ? `<div class="task-desc">${t.description.substring(0,70)}${t.description.length>70?'...':''}</div>`
+        : '';
+
+      const statusCls = col==='Pending'?'status-pending':col==='InProgress'?'status-inprogress':'status-completed';
+      const completeBtn = t.status!=='Completed'
+        ? `<button class="tbtn tbtn-ok" onclick="markComplete(${t.id})" title="Mark complete">✓</button>`
+        : '';
+
+      return `<div class="task-card ${statusCls}" id="task-${t.id}" draggable="true"
+          ondragstart="onDragStart(event,${t.id})" ondragend="onDragEnd(event)"
+          style="animation-delay:${i*0.04}s">
+        <div class="task-card-hdr">
+          <div class="task-title">${t.title}</div>
+          <div class="task-btns">
+            ${completeBtn}
+            <button class="tbtn tbtn-del" onclick="deleteTask(${t.id})" title="Delete">✕</button>
+          </div>
+        </div>
+        ${custHtml}
+        ${descHtml}
+        <div class="task-footer">
+          <div class="task-sr-tag"><div class="sr-dot">${t._srName.charAt(0).toUpperCase()}</div>${t._srName}</div>
+          ${dueHtml}
+        </div>
+      </div>`;
+    }).join('');
+  });
+}
+
+// DRAG & DROP — saves status to DB
+function onDragStart(e,id){ dragId=id; setTimeout(()=>document.getElementById('task-'+id)?.classList.add('dragging'),0); }
+function onDragEnd(e){ document.querySelectorAll('.task-card').forEach(c=>c.classList.remove('dragging')); dragId=null; }
+function onDragOver(e,col){ e.preventDefault(); document.getElementById('col-'+col).classList.add('drag-over'); }
+function onDragLeave(e){ e.currentTarget.classList.remove('drag-over'); }
+
+async function onDrop(e,col){
+  e.preventDefault();
+  document.querySelectorAll('.col-body').forEach(c=>c.classList.remove('drag-over'));
+  if(!dragId) return;
+  const dbStatus = col==='Pending'?'Pending':col==='InProgress'?'In Progress':'Completed';
+  try{
+    if(dbStatus==='Completed') await Api.put('/task/'+dragId+'/complete',{});
+    else await Api.put('/task/'+dragId,{status:dbStatus});   // ← saved to DB
+    dragId=null;
+    await loadBoard();
+  }catch(err){ alert('Failed to update: '+err.message); }
+}
+
+async function markComplete(id){
+  try{ await Api.put('/task/'+id+'/complete',{}); await loadBoard(); }
+  catch(e){ alert(e.message); }
+}
+
+async function deleteTask(id){
+  if(!confirm('Delete this task? This cannot be undone.')) return;
+  try{ await Api.delete('/task/'+id); await loadBoard(); }
+  catch(e){ alert(e.message); }
+}
+
+// ASSIGN MODAL
+function openAssignModal(){ document.getElementById('assignModal').classList.add('open'); }
+function closeAssignModal(){ document.getElementById('assignModal').classList.remove('open'); document.getElementById('assignErr').style.display='none'; }
+
+function onSRChange(){
+  const srId = parseInt(document.getElementById('assignSR').value);
+  const custGroup = document.getElementById('custGroup');
+  if(!srId){ custGroup.style.display='none'; return; }
+  // Show customers assigned to this SR
+  const srCustomers = allCustomers.filter(c=>c.salesRepId===srId);
+  document.getElementById('assignCustomer').innerHTML =
+    '<option value="">— No specific customer —</option>' +
+    srCustomers.map(c=>`<option value="${c.id}">${c.name}${c.company?' ('+c.company+')':''} — #${String(c.id).padStart(4,'0')}</option>`).join('');
+  custGroup.style.display = 'block';
+}
+
+function onCustomerChange(){
+  const custId = document.getElementById('assignCustomer').value;
+  if(!custId) return;
+  const cust   = allCustomers.find(c=>c.id==custId);
+  const srName = allSRs.find(s=>s.id==document.getElementById('assignSR').value)?.name||'';
+  if(cust){
+    document.getElementById('assignTitle').value = `Follow up with ${cust.name}`;
+    document.getElementById('assignDesc').value  = `Customer #${String(cust.id).padStart(4,'0')}${cust.company?' — '+cust.company:''}`;
+  }
+}
+
+async function submitAssign(){
+  const srId    = document.getElementById('assignSR').value;
+  const title   = document.getElementById('assignTitle').value.trim();
+  const custId  = document.getElementById('assignCustomer').value;
+  const errEl   = document.getElementById('assignErr');
+  errEl.style.display='none';
+
+  if(!srId||!title){ errEl.textContent='⚠️ Sales Rep and task title are required.'; errEl.style.display='block'; return; }
+
+  try{
+    // POST with customerId stored directly in DB — no text hacks
+    await Api.post('/task',{
+      title,
+      description: document.getElementById('assignDesc').value.trim(),
+      status:      'Pending',
+      dueDate:     document.getElementById('assignDue').value
+                   ? new Date(document.getElementById('assignDue').value).toISOString()
+                   : new Date().toISOString(),
+      salesRepId:  parseInt(srId),
+      customerId:  custId ? parseInt(custId) : null   // ← stored in DB
+    });
+    closeAssignModal();
+    // Reset form
+    document.getElementById('assignTitle').value   = '';
+    document.getElementById('assignDesc').value    = '';
+    document.getElementById('assignSR').value      = '';
+    document.getElementById('assignCustomer').value= '';
+    document.getElementById('custGroup').style.display='none';
+    await loadBoard();
+  }catch(e){ errEl.textContent='⚠️ '+e.message; errEl.style.display='block'; }
+}
+
+loadBoard();
+</script>
+</body>
+</html>
