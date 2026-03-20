@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using CRM.API.Data;
@@ -27,9 +28,9 @@ public class AuthController : ControllerBase
 
         var user = new User
         {
-            Name     = dto.Name,
-            Email    = dto.Email,
-            Role     = "SalesRep",
+            Name         = dto.Name,
+            Email        = dto.Email,
+            Role         = "SalesRep",
             PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password)
         };
         _db.Users.Add(user);
@@ -84,15 +85,32 @@ public class AuthController : ControllerBase
 
     [HttpPost("logout")]
     public IActionResult Logout() => Ok(new { message = "Logged out" });
+
+    [HttpPost("reset-password")]
+    [AllowAnonymous]
+    public async Task<IActionResult> ResetPassword([FromBody] AuthResetPasswordDto dto)
+    {
+        if (string.IsNullOrWhiteSpace(dto.Email) || string.IsNullOrWhiteSpace(dto.NewPassword))
+            return BadRequest("Email and new password are required.");
+
+        var user = await _db.Users.FirstOrDefaultAsync(u => u.Email == dto.Email);
+        if (user == null)
+            return NotFound("No account found with that email.");
+
+        user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.NewPassword);
+        await _db.SaveChangesAsync();
+
+        return Ok(new { message = "Password reset successfully." });
+    }
 }
 
 public class RegisterDto
 {
-    public string Name      { get; set; } = string.Empty;
-    public string Email     { get; set; } = string.Empty;
-    public string Password  { get; set; } = string.Empty;
-    public string? Phone    { get; set; }
-    public string? City     { get; set; }
+    public string Name       { get; set; } = string.Empty;
+    public string Email      { get; set; } = string.Empty;
+    public string Password   { get; set; } = string.Empty;
+    public string? Phone     { get; set; }
+    public string? City      { get; set; }
     public string? Expertise { get; set; }
 }
 
@@ -100,4 +118,10 @@ public class LoginDto
 {
     public string Email    { get; set; } = string.Empty;
     public string Password { get; set; } = string.Empty;
+}
+
+public class AuthResetPasswordDto
+{
+    public string Email       { get; set; } = string.Empty;
+    public string NewPassword { get; set; } = string.Empty;
 }
